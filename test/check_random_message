@@ -16,6 +16,9 @@ function n_random_chars_to_file {
   local MINIMAL;
   local I;
   local COUNT ;
+  local LIM ;
+  local K ;
+  local L ;
   
   if [ -z "$4" ]; then
     MINIMAL=0x00 ;

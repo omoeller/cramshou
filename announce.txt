@@ -1,0 +1,115 @@
+## #############################################################
+## Tentative annoucements of the Cramer Shoup Crypto System
+## in NEWSGROUPS (sci.crypt)
+## 
+## Synopsis:
+##  Cramer Shoup Crypto System
+## #############################################################
+## @TABLE OF CONTENTS:		       [TOCD: 14:15 18 Jul 2004]
+##
+##  [1] 2004: (planned)
+## ##########################################################
+## @FILE:    announce.txt
+## @PLACE:   Linux Homestation
+## @FORMAT:  txt
+## @AUTHOR:  M. Oliver M'o'ller     <omoeller@verify-it.de>
+## @BEGUN:   Sun Jul 18 13:32:28 2004
+## @VERSION: Sun Jul 18 14:22:07 2004
+## #############################################################
+## @SPELL:   british 			Sun Jul 18 14:13:30 2004
+
+Announcements in Usegroups:
+
+## ###################################################################
+## [1] 2004: (planned)
+## ###################################################################
+
+Subject: Java Implementation: Cramer-Shoup 98 Crypto System
+
+Hello Crypto-Community.
+
+I'd like to announce the availability of an Java Implementation of the
+Cramer-Shoup public key crypto system [CS98]. This includes:
+
+a. the implementation of en/de-cryption algorithm, where arbitrary length
+   bit lists serve as input ; encryption pads the last block with random
+   numbers and uses perfect hashing
+b. a Java front-end that allows inclusion of the algorithm in a HTML page
+   via an Applet. A base64-style ASCII armour is used to represent the
+   crypto-text.  The same front-end can be used to encrypt/decrypt files
+   from command line
+c. a key generation algorithm (again, in Java) that generates a compile-able
+   CrytoModule.java file, containing both public and secret key.
+
+If you want to try it from command line, you need a working Java environment
+(1.1.4 or higher) and follow the following steps:
+
+1. Download the sources of both key-generator and front-end at:
+   http://www.verify-it.de/applets/KeyGeneratorCS.java
+   http://www.verify-it.de/applets/Crypter.java
+
+2. Compile the Key Generator:
+   javac KeyGeneratorCS.java
+
+3. Generate a key and direct it to a .java file, e.g., by doing :
+   java KeyGeneratorCS -f CryptoModule.java -o "YOUR NAME <YOUR@EMAIL>" -n KEYNAME 
+
+4. Compile the generated key, together with the front-end (Crypter):
+   javac -classpath . CryptoModule.java Crypter.java
+
+5. Now you are ready to en-decrypt from command line:
+   java Crypter e MESSAGE.txt CRYPTO.txt
+   java Crypter d CRYPTO.txt  DECRYPTED.txt
+
+NOTES:
+I) Since there is some random padding, the de-crypted message has some 
+   'random garbage' at the end.
+   In order to avoid this, the string constant "\n*\n" is always appended 
+   to the message text before encryption.
+   Decryption truncates the smallest tail starting with this string, which
+   (except for some very unlikely padding) yields exactly the clear text
+   message.
+   You can suppress truncation by using 'u' (un-truncated) instead of 'd':
+     java Crypter u CRYPTO.txt  DECRYPTED.txt
+
+II) File encoding is by default assumed to be 8bit/character.
+    You can set bits/character explicitly by command line option -7,-8,-16.
+
+III) If you plan to make public key encryption directed to you available on
+     the web (as done on my web pages), you have to make a copy of the the
+     CryptoModule.java (to a different directory) and REMOVE the secret key
+     part, eg., by replacing it with nonsense data:
+
+      byte[] x1 = { 0 } ;
+      byte[] x2 = { 0 } ;
+      byte[] y1 = { 0 } ;
+      byte[] y2 = { 0 } ;
+      byte[] z = { 0 } ;
+
+IV) You can play with en/decryption in your browser for a toy key-pair (here,
+    the private key is included in the web-accessible .class file:
+
+    http://www.verify-it.de/sub/toycrypt/toycrypter.html
+
+V) This release (Crypter, Version 2.0.12) fixes 
+   - previous problems with 7/8-bit encoding (Java FileReader issues) and is
+     compatible with keys/crypto texts generated with Version 1.6.x.
+   - a potential inversion problem with number 0 (which has no inverse)
+
+More information can be found at 
+
+  http://www.verify-it.de/sub/cramer_shoup.html
+
+The algorithm was tried and tested on several platforms (SuSE-Linux, Cygwin)
+and browsers (Netscape, Mozilla, konqueror, IE), but there is of course no
+warranty that it will work in any setting.
+
+Please send problem reports to <omoeller@verify-it.de>.
+Comments and suggestions are also welcome.
+
+References:
+[CS98] Ronald Cramer and Victor Shoup: A practical public key crypto system provably secure against adaptive chosen ciphertext attack. in proceedings of Crypto 1998, LNCS 1462, p.13ff
+
+- oli						       http://www.verify-it.de
+*com-pu-ter*: device to enhance our capability to err. <omoeller@verify-it.de>
+
