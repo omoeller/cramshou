@@ -1,6 +1,12 @@
 This directory is for the development of the Crypter wrapper
 (which is both applet and application)
 
+tag with
+    
+	CRYPTER_REL_x_x_x
+
+(no revison tag).
+
 The standard realization of a CrytoModule.java should actually
 be an instance of a crypto-INTERFACE; this is not programmed
 this way to keep things simple.
