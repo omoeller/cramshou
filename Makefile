@@ -96,15 +96,6 @@ jar:	$(OBJECT_FILES)
 
 .PHONEY:  millstone
 
-millstone:
-	echo "// Generated from Crypter.java on $(date)" |cat - Crypter.java \
-	     |sed "s/Crypter/MillstoneCrypter/g" \
-	     |sed "s/CryptoModule/MillstoneCryptoModule/g" \
-	     > ./.millstone/MillstoneCrypter.java; \
-	pushd ./.millstone;	\
-	javac MillstoneCrypter.java; \
-	popd;	\
-	echo "makeMillstone: done.";
 
 
 ## ###################################################################
@@ -116,7 +107,6 @@ WWW_BASE=$(HOME)/Domain/Upload
 .PHONEY: publish
 
 publish:
-	make millstone ; \
 	cd Public; make clean all publish; cd ..; \
 	cd .millstone; make clean all publish; cd .. ; \
 	echo "publish: done." ;\

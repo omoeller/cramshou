@@ -237,6 +237,21 @@ public class Crypter extends java.applet.Applet implements Runnable {
 	CONST.bitsPerByte = 8;
 	argCount++;
       }
+      if(argv[argCount].equals("-16")){
+	System.out.println("** using 16 bits per charakter.");
+	CONST.bitsPerByte = 16;
+	argCount++;
+      }
+      if(argv[argCount].equals("-17")){
+	System.out.println("** using 17 bits per charakter.");
+	CONST.bitsPerByte = 17;
+	argCount++;
+      }
+      if(argv[argCount].equals("-18")){
+	System.out.println("** using 18 bits per charakter.");
+	CONST.bitsPerByte = 18;
+	argCount++;
+      }
       String inFileName = argv[argCount++];
       String outFileName = "";
       if(argv.length >= argCount)
@@ -246,13 +261,24 @@ public class Crypter extends java.applet.Applet implements Runnable {
       StringBuffer inString = new StringBuffer();
       String outString = "*";
       char[] c = new char[1];
+      int i = 0;	
       while(in.ready()){
 	in.read(c,0,1);
+	//c[0] = (char)(65535&(int)c[0]);
+	//c[0] = (char)(1023&(int)c[0]);
+	//System.out.println("  " + (++i) + "  " + (int)c[0]);
 	inString.append(c); }
       //System.out.println("***\n" + inString.toString() +"***");
       // -- execute ---------------------------------------------
       if(  command.equals("e") || command.equals("encrypt") ){
 	System.out.print("** Encrypting...");
+
+	// --
+	for(i=0; i < inString.length(); i++){
+	//	System.out.println("  " + (i+1) + "  " + (int)inString.charAt(i));
+	}
+	// --
+
 	outString = 
 	  cm.keyNameString +
 	  b64.bits2base64(cm.encrypt(b64.string2bits(inString.toString() +  CONST.TERMINATOR)));
@@ -451,13 +477,30 @@ class Base64Handler {
     
     int i;
     int count = 0;
-    int b;
+    long b;
     for(i = 0; i< s.length(); i++){
-      b = (int)s.charAt(i);
+      b = (long)s.charAt(i);
 
-      if(CONST.bitsPerByte > 8){
+      if(CONST.bitsPerByte > 17)
+	bits[count++] = ((b & 131072) != 0);
+      if(CONST.bitsPerByte > 16)
+	bits[count++] = ((b & 65536) != 0);
+      if(CONST.bitsPerByte > 15)
+	bits[count++] = ((b & 32768) != 0);
+      if(CONST.bitsPerByte > 14)
+	bits[count++] = ((b & 16384) != 0);
+      if(CONST.bitsPerByte > 13)
+	bits[count++] = ((b & 8192) != 0);
+      if(CONST.bitsPerByte > 12)
+	bits[count++] = ((b & 4096) != 0);
+      if(CONST.bitsPerByte > 11)
+	bits[count++] = ((b & 2048) != 0);
+      if(CONST.bitsPerByte > 10)
+	bits[count++] = ((b & 1024) != 0);
+      if(CONST.bitsPerByte > 9)
+	bits[count++] = ((b & 512) != 0);
+      if(CONST.bitsPerByte > 8)
 	bits[count++] = ((b & 256) != 0);
-      }
       bits[count++] = ((b & 128) != 0);
       bits[count++] = ((b &  64) != 0);
       bits[count++] = ((b &  32) != 0);
@@ -466,6 +509,9 @@ class Base64Handler {
       bits[count++] = ((b &   4) != 0);
       bits[count++] = ((b &   2) != 0);
       bits[count++] = ((b &   1) != 0);}
+
+    System.out.println("\n -- Input String length: " + s.length());
+    System.out.println(" -- Input Bits: " + bits.length);
     
     return bits;
   }
@@ -481,35 +527,48 @@ class Base64Handler {
     StringBuffer result = new StringBuffer();
     String resString;
     int b = 0;
-    byte[] dummy = new byte[1];
+    char[] dummy = new char[1];
+    char[] chars = new char[2+bits.length/(CONST.bitsPerByte)];
+    int j = 0;	
     int counter = 0;
+
+    System.out.println("\n -- Output Bits: " + bits.length);
 
     for(i = 0; i < bits.length; i++){
 
-      b = (byte)(2*b);
-      if(bits[i])b = (byte)(b|1);
+      b = (2*b);
+      if(bits[i])b = (int)(b|1);
       counter++;
       if(counter == CONST.bitsPerByte){
-	dummy[0] = (byte)b;
-	result.append(new String(dummy));
+	dummy[0] = (char)b;
+	//	result.append(new String(dummy));
+	chars[j++] = (char)b;
 	counter = 0;
 	b = 0;}}
     if(counter > 0){// do not ignore leftover bits
-      b = (byte)(b<<(CONST.bitsPerByte-counter));
-	dummy[0] = (byte)b;
-	result.append(new String(dummy));
+      b = (int)(b<<(CONST.bitsPerByte-counter));
+	chars[j++] = (char)b;
+	//	dummy[0] = (char)b;
+	//	result.append(new String(dummy));
     }
 
+    while(j < chars.length)
+	chars[j++] = 0;	
+
+    result = new StringBuffer(new String(chars));	
 
     resString = result.toString();
 
     if(truncate){
       for(i = result.length(); i >= 0; i--){
 	if(resString.regionMatches(true,i,CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
-	  return result.substring(0,i);
+	  System.out.println("! Truncate");	
+	  resString = result.substring(0,i);
+	  i = -1;
 	}
       }
     }
+    System.out.println(" -- output String length: " + resString.length());
     
     return resString;
   }
