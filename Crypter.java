@@ -2,7 +2,7 @@
 /***********************************************************************
  * @(#)Crypter.java   
  *
- * Requires: java 1.4.2 (or higher)
+ * Requires: java 1.1.5 (or higher)
  *
  * No Copyright (!c)
  *
@@ -38,8 +38,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.OutputStream;
@@ -56,7 +54,7 @@ import java.io.OutputStreamWriter;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "2.0." + new String("$Revision: 1.9 $").substring(13).replace('$',' ');
+  final static String  version    = "2.0." + new String("$Revision: 1.10 $").substring(13).replace('$',' ');
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
@@ -72,7 +70,7 @@ class CONST {
  * 
  * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:49:25%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  1.6.2                   Tue Jul  6 22:05:44 2004
+ * @version  $Revision: 1.10 $            $Date: 2004/07/07 06:52:54 $
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -707,6 +705,9 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.10  2004/07/07 06:52:54  oli
+ * removed Java 1.4 dependency again
+ *
  * Revision 1.9  2004/07/07 06:16:28  oli
  * removed surplus Charset dependency
  *

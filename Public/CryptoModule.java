@@ -30,7 +30,7 @@ import java.util.Random;
    * </PRE>
    * 
    * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=CryptoModule.java<2>%20(1.2%20Sun%20Jul%2014%2023:24:21%202002)">M. Oliver M&ouml;ller</A>
-   * @version  1.2 		Sun Jul 14 23:33:45 2002
+   * @version  $Revision: 1.2 $ 		$Date: 2004/07/07 06:52:54 $
    */
 public class CryptoModule {
 
@@ -393,16 +393,8 @@ public class CryptoModule {
 /**
  * Auxillary data structure for hash function
  * 
- * @version 1.2 		Sun Jul 14 23:33:45 2002
+ * @version  $Revision: 1.2 $ 		$Date: 2004/07/07 06:52:54 $
  */
-
-
-
-
-
-
-
-
 class HashFunction {
     BigInteger hash_g1;
     BigInteger hash_g2;
@@ -419,17 +411,8 @@ class HashFunction {
  *
  * The variable names used correspond to the ones in [CS98]
  *
- * @version 1.2 		Sun Jul 14 23:33:45 2002
+ * @version  $Revision: 1.2 $ 		$Date: 2004/07/07 06:52:54 $
  */
-
-
-
-
-
-
-
-
-
 class SecretKey {
     int          k;        // number of bits
     BigInteger   p;        // prime modulus
@@ -491,7 +474,11 @@ class PublicKey {
 }
 
 /**********************************************************************
- * Changelog
+ * Changelog:
+ * $Log: CryptoModule.java,v $
+ * Revision 1.2  2004/07/07 06:52:54  oli
+ * removed Java 1.4 dependency again
+ *
  *
  * 1.1 : added randomized fill beyond bounds of message
  *       (was: empty message built exception)

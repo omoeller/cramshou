@@ -29,8 +29,8 @@ all:	\
 
 
 clean:
-	rm *.class
-
+	rm *.class \
+		Crypter.java KeyGeneratorCS.java
 
 
 ## -- Copy all java - except CrypoModule.java ! ----------------------------

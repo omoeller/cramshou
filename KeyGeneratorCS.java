@@ -16,11 +16,11 @@
 // @FORMAT:  java
 // @AUTHOR:  M. Oliver M'o'ller     <omoeller@verify-it.de>
 // @BEGUN:   Thu Jul 11 10:59:06 2002
-// @VERSION: 1.0alpha Fri Jul  2 21:56:08 2004
+// @VERSION: $Revision: 1.3 $ 		$Date: 2004/07/07 06:52:54 $
 // /////////////////////////////////////////////////////////////
-// $Id: KeyGeneratorCS.java,v 1.2 2004/07/06 20:46:31 oli Exp $
+// $Id: KeyGeneratorCS.java,v 1.3 2004/07/07 06:52:54 oli Exp $
 // /////////////////////////////////////////////////////////////
-// @SPELL:   american 			Thu Jul 11 22:29:19 2002
+// @SPELL:   british 			Wed Jul  7 07:43:06 2004
 
 import java.lang.*;
 
@@ -57,12 +57,12 @@ public class KeyGeneratorCS  {
   /**
    * Name of this version (should be global for project)
    */
-  public static final String VERSION_NAME = "1.1 $Revision: 1.2 $";
+  public static final String VERSION_NAME = "1.1 $Revision: 1.3 $";
 
   /**
    * Date of last changes
    */
-  public static final String VERSION_DATE = "$Date: 2004/07/06 20:46:31 $";
+  public static final String VERSION_DATE = "$Date: 2004/07/07 06:52:54 $";
 
   /**
    * String describing the version of this API
