@@ -1,0 +1,11 @@
+ use val
+ to validate the files.
+
+The skript val.bash is a template for val,
+and calling
+    ./mkval.bash
+creates val from val.bash, while copying the relevant files into the
+current directory. 
+
+- oli
+
