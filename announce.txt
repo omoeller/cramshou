@@ -280,5 +280,236 @@ Implementing Legendre(x,p) is left as an exercise for the reader.
 -- 
 Kristian Gjøsteen
 
+## -------------------------------------------------------------
+
+From: "David A. Scott" <daVvid_a_scott@email.com>
+Subject: Re: Padding Question (Cramer-Shoup 98 Crypto System)
+Newsgroups: sci.crypt
+Date: 23 Nov 2004 15:42:05 GMT
+Organization: Your Company
+
+Oliver Moeller <omoeller@verify-it.de> wrote in 
+news:87oehrgcl7.fsf@gaia.verify-it.de:
+
+> 
+> My Questions:
+> (1) Is (I) an acceptable way to pad? 
+> (2) Is (II) PKCS5 better than padding with 10* ? 
+> (3) Is there a suggested or even 'optimal' way to pad?
+> 
+> Thanks.
+> 
+> 
+
+   Yes there are much better ways to pad. You should at least
+always use some form of bijective padding weither or not your
+adding random data.
+
+
+David A. Scott
+-- 
+My Crypto code
+http://bijective.dogma.net/crypto/scott19u.zip
+http://www.jim.com/jamesd/Kong/scott19u.zip old version
+My Compression code http://bijective.dogma.net/
+**TO EMAIL ME drop the roman "five" **
+Disclaimer:I am in no way responsible for any of the statements
+ made in the above text. For all I know I might be drugged.
+As a famous person once said "any cryptograhic
+system is only as strong as its weakest link"
+
+## -------------------------------------------------------------
+
+From: karl_m@acm.org
+Subject: Re: Padding Question (Cramer-Shoup 98 Crypto System)
+Newsgroups: sci.crypt
+Date: 23 Nov 2004 11:00:46 -0800
+Organization: http://groups.google.com
+
+
+David A. Scott wrote:
+> Oliver Moeller <omoeller@verify-it.de> wrote in
+> news:87oehrgcl7.fsf@gaia.verify-it.de:
+>
+> >
+> > My Questions:
+> > (1) Is (I) an acceptable way to pad?
+> > (2) Is (II) PKCS5 better than padding with 10* ?
+> > (3) Is there a suggested or even 'optimal' way to pad?
+> >
+> > Thanks.
+> >
+> >
+>
+>    Yes there are much better ways to pad. You should at least
+> always use some form of bijective padding weither or not your
+> adding random data.
+
+1. Reversible.
+2. Unique.
+3. Random.
+
+Do you have additional attributes for bijective?  karl m
+
+
+## -------------------------------------------------------------
+
+From: Mark Wooding <mdw@nsict.org>
+Subject: Re: Padding Question (Cramer-Shoup 98 Crypto System)
+Newsgroups: sci.crypt
+Date: Wed, 24 Nov 2004 13:08:35 +0000 (UTC)
+Organization: National Society for the Inversion of Cuddly Tigers
+
+Oliver Moeller <omoeller@verify-it.de> wrote:
+
+> I have a Java implementation of Cramer-Shoup 98 Crypto System (see
+> links below). Version 2.1 now guarantees to de-crypt to the original
+> message by introducing a safe way to pad the clear text message up to
+> the required block size.
+
+Cramer-Shoup is IND-CCA2 out of the box, so your padding scheme doesn't
+have to have any particularly interesting security properties.  CS
+already takes care of randomizing the encryption, so padding can be
+deterministic.  The /only/ job padding needs to do is injectively
+transform your message into a member of the appropriate group.  This,
+alas, is nontrivial.
+
+CS wants to work in a group of prime order.  Your suggestions just
+encode the message as a large integer and hope for the best, without
+regard to whether the result is in the right subgroup of F_p^*.
+
+The CS paper suggests using safe primes (i.e., p = 2 q + 1 with q
+prime); then once you've encoded your message as an integer 1 <= m < q,
+you can use m^2 as your message representative.  Recovery is a matter of
+finding the square root in the right range, noting that x^2 = (p - x)^2
+(mod p) and decoding the result.
+
+If you're using more general primes then you have a more difficult
+problem.  If p = q h + 1 for prime q, then you could proceed as above,
+using m^h as your message representative.  However, extraction of h-th
+roots mod p is a nontrivial job, particularly if you want the specific
+one which lies between 1 and q, so this rapidly looks like a bad idea.
+I found http://www.ma.utexas.edu/users/voloch/Preprints/roots.pdf which
+shows how to find roots in finite fields, but doesn't seem to be of much
+use if you really want /this particular one/.  I think this approach is
+doomed to failure.
+
+Encoding a message as an integer in 1, ..., q - 1 is straightforward.
+Suppose that 2^{8 b - 1} <= q < 2^{8 b}, i.e., q needs b bytes to write
+it down.  Your message M must be b - 2 bytes long or less.  Let M' = 00
+|| ZZ || 01 || M', where ZZ is a string of zero bytes long enough to
+make M' be b bytes long.  Transform M' into an integer using the big-
+endian convention.  Decoding is obvious.
+
+If you're doing CS on an elliptic curve then life is actually a little
+easier.  Suppose we need b bytes to represent a field element.  Choose
+some n, about 4 is enough; you'll be able to represent messages M which
+are b - n - 2 bytes long with failure probability 2^{-8 n}.  Simply
+encode M as M' = 00 || I || ZZ || 01 || M, where I is an n-byte counter
+starting at 0, and ZZ is a string of zero bytes long enough to make M'
+be b bytes long.  Now, transform M' into a field element x (using OS2FEP
+or whatever) and see if there's a y such that (x, y) is (a) on your
+curve and (b) in the right subgroup.  If not, then step I on one and try
+again.  Each try will succeed with probability about 1/2^{1 + h}, where
+h is the curve's cofactor.  Decoding is again obvious.
+
+Actually, the hybrid approach seems superior in almost every respect.
+Choose a random group element, and hash it to obtain a session key for a
+symmetric IND-CCA2 encryption scheme.  Encrypt your group element with
+CS and append the ciphertext of your message encrypted under the session
+key.  (In practice, DLIES is almost certainly a better bet -- it's
+simpler and faster.  But I'm guessing this is about CS being cool rather
+than practical, and there's nothing wrong with that.)
+
+-- [mdw]
+
+
+## ----------------------------------------------------
+
+From: Michael Amling <nospam@nospam.com>
+Subject: Re: Padding Question (Cramer-Shoup 98 Crypto System)
+Newsgroups: sci.crypt
+Date: Wed, 24 Nov 2004 14:43:32 GMT
+Organization: SBC http://yahoo.sbc.com
+
+Mark Wooding wrote:
+> If you're using more general primes then you have a more difficult
+> problem.  If p = q h + 1 for prime q, then you could proceed as above,
+> using m^h as your message representative.  However, extraction of h-th
+> roots mod p is a nontrivial job, particularly if you want the specific
+> one which lies between 1 and q, so this rapidly looks like a bad idea.
+
+   I would think the method used to find RSA private keys would work here. Let
+d=h**-1 mod p-1. Then m=c**d mod p is one value of c**(1/h). If that's not the
+one you want, multiply by the h-1 roots of 1 mod p to find the others.
+   Note: I don't know how to find the h-1 non-trivial roots of 1 mod p, but
+you'd only have to do it once, not once per message. If that's what you're
+saying is non-trivial, then I agree.
+
+
+> I found http://www.ma.utexas.edu/users/voloch/Preprints/roots.pdf which
+> shows how to find roots in finite fields, but doesn't seem to be of much
+> use if you really want /this particular one/.  I think this approach is
+> doomed to failure.
+
+--Mike Amling
+
+## ----------------------------------------------------
+
+From: Kristian Gjøsteen <kristiag+news@math.ntnu.no>
+Subject: Re: Padding Question (Cramer-Shoup 98 Crypto System)
+Newsgroups: sci.crypt
+Date: Wed, 24 Nov 2004 15:37:11 +0000 (UTC)
+Organization: Norwegian University of Science and Technology
+
+Michael Amling  <nospam@nospam.com> wrote:
+>Mark Wooding wrote:
+>> 
+>> If you're using more general primes then you have a more difficult
+>> problem.  If p = q h + 1 for prime q, then you could proceed as above,
+>> using m^h as your message representative.  However, extraction of h-th
+>> roots mod p is a nontrivial job, particularly if you want the specific
+>> one which lies between 1 and q, so this rapidly looks like a bad idea.
+>
+>   I would think the method used to find RSA private keys would work 
+>here. Let d=h**-1 mod p-1. Then m=c**d mod p is one value of c**(1/h). 
+>If that's not the one you want, multiply by the h-1 roots of 1 mod p to 
+>find the others.
+>   Note: I don't know how to find the h-1 non-trivial roots of 1 mod p, 
+>but you'd only have to do it once, not once per message. If that's what 
+>you're saying is non-trivial, then I agree.
+
+Finding h-1 non-trivial roots of 1 mod p is the same as finding an element
+of order h. This is easy if you know h, q and any small factors of h.
+(Choose a random element, raise it to the qth power, check that it has
+order h.)
+
+The problem is that h is typically large (say 2^860 when q is ~2^160).
+But if h is small it could be done as you suggest.
+
+But you don't really want a PKC, you want a KEM, and then you should
+use the CS03-KEM or the newer variants based on Desmedt and Kurosawa.
+They can use small subgroups without any problems.
+
+-- 
+Kristian Gjøsteen
+
+## -------------------------------------------------------------
+
+From: Michael Amling <nospam@nospam.com>
+Subject: Re: Padding Question (Cramer-Shoup 98 Crypto System)
+Newsgroups: sci.crypt
+Date: Wed, 24 Nov 2004 19:55:08 GMT
+Organization: SBC http://yahoo.sbc.com
+
+Kristian Gjøsteen wrote:
+> The problem is that h is typically large (say 2^860 when q is ~2^160).
+
+   Oh, of course. I was thinking of the h ECC, where h is no more than 16.
+
+> But if h is small it could be done as you suggest.
+
+--Mike Amling
+
 
 ## -------------------------------------------------------------------------
