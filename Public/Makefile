@@ -9,11 +9,11 @@
 ##  [1] Publish
 ## ##########################################################
 ## @FILE:    Makefile
-## @PLACE:   Gaia Home
+## @PLACE:   Linux Homestation
 ## @FORMAT:  plain text
 ## @AUTHOR:  M. Oliver M'o'ller     <oliver.moeller@verified.de>
 ## @BEGUN:   Tue Feb  4 00:18:06 2003
-## @VERSION: Tue Feb  4 00:18:06 2003
+## @VERSION: Wed Jul  7 07:57:14 2004
 ## #############################################################
 ## 
 
@@ -63,8 +63,10 @@ publish:
 	cp HashFunction.class $(WWW_BASE)/applets/ ; \
 	cp Listener.class $(WWW_BASE)/applets/ ; \
 	cp PublicKey.class $(WWW_BASE)/applets/ ; \
+	cp KeyGeneratorCS.class $(WWW_BASE)/applets/ ; \
 	chmod 0755 $(WWW_BASE)/applets/*.class ; \
 	cp Crypter.java $(WWW_BASE)/applets/ ; \
 	cp CryptoModule.java $(WWW_BASE)/applets/ ; \
+	cp KeyGeneratorCS.java $(WWW_BASE)/applets/ ; \
 	chmod 0644 $(WWW_BASE)/applets/Crypt*.java ; 
 

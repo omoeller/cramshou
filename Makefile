@@ -117,6 +117,7 @@ WWW_BASE=$(HOME)/Domain/Upload
 publish:
 	cd Public; make clean all publish; cd ..; \
 	cd .millstone; make clean all publish; cd .. ; \
+	cd toy; make clean all publish; cd .. ; \
 	echo "publish: done." ;\
 	echo "NOTES:"; \
 	echo " + remember to update crypter.html, applet-crypter.html, millstone_crypter.html, applet-millstone_crypter.html" ;\
