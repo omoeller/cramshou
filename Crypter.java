@@ -54,10 +54,9 @@ import java.io.OutputStreamWriter;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "2.0." + new String("$Revision: 1.12 $").substring(13).replace('$',' ');
-  final static String  TERMINATOR = "\n*\n"; 
-
-  public static boolean truncateAfterTERMINATOR;
+  final static String  version    = "2.0." + new String("$Revision: 1.13 $").substring(13).replace('$',' ');
+  public static boolean truncateAfterTERMINATOR = true;
+  public static boolean ignoreLeftoverBits = true;
   public static boolean verbose = false;
   public static int bitsPerByte = 8;
 }
@@ -70,7 +69,7 @@ class CONST {
  * 
  * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:49:25%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  $Revision: 1.12 $            $Date: 2004/07/12 20:51:50 $
+ * @version  $Revision: 1.13 $            $Date: 2004/11/10 08:17:08 $
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -180,7 +179,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
     listener.outputArea.setText("");
     repaint();
     listener.outputArea.setText(cm.keyNameString +
-				b64.bits2base64(cm.encrypt(b64.string2bits(listener.inputArea.getText() + CONST.TERMINATOR + "\n" ))));
+				b64.bits2base64(cm.encrypt(b64.string2bitsPad(listener.inputArea.getText(), true))));
     listener.messageLabel.setText("--- Encryption finished.");
   }
   
@@ -311,7 +310,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
 	System.err.print("** Encrypting...");
 	outString = 
 	  cm.keyNameString +
-	  b64.bits2base64(cm.encrypt(b64.string2bits(inString.toString() +  CONST.TERMINATOR + "\n" )));
+	  b64.bits2base64(cm.encrypt(b64.string2bitsPad(inString.toString(), true)));
       } 
       else if(  command.equals("d") || command.equals("decrypt") ){
 
@@ -511,12 +510,17 @@ class Base64Handler {
     char2bits[43] = 62;
     char2bits[47] = 63;
   }
-  public static boolean[] string2bits(String s){
-    boolean[] bits = new boolean[s.length()*CONST.bitsPerByte];
-    
+  public static boolean[] string2bitsPad(String s, boolean pad){
+    boolean[] bits ;
     int  i;
     int  count = 0;
     char b;
+
+    if(pad)
+      bits = new boolean[s.length()*CONST.bitsPerByte + 16];
+    else 
+      bits = new boolean[s.length()*CONST.bitsPerByte];
+
 
     for(i = 0; i< s.length(); i++){
       b = (char)s.charAt(i);
@@ -550,7 +554,15 @@ class Base64Handler {
       bits[count++] = ((b &   8) != 0);
       bits[count++] = ((b &   4) != 0);
       bits[count++] = ((b &   2) != 0);
-      bits[count++] = ((b &   1) != 0);}
+      bits[count++] = ((b &   1) != 0);
+    }
+    if(pad){
+      // pad with fixed pattern: 1000 1000 1000 1000 
+      bits[count++] = true; bits[count++] = false; bits[count++] = false; bits[count++] = false;
+      bits[count++] = true; bits[count++] = false; bits[count++] = false; bits[count++] = false;
+      bits[count++] = true; bits[count++] = false; bits[count++] = false; bits[count++] = false;
+      bits[count++] = true; bits[count++] = false; bits[count++] = false; bits[count++] = false;
+    }
 
     if(CONST.verbose){
       System.err.println("\n -- Input String length: " + s.length());
@@ -559,7 +571,10 @@ class Base64Handler {
     
     return bits;
   }
-  
+
+  public static boolean[] string2bits(String s){  
+    return string2bitsPad(s, false);
+  }
   
 
   public static String bits2string(boolean[] bits){
@@ -568,18 +583,35 @@ class Base64Handler {
   
   public static String bits2stringTruncate(boolean[] bits, boolean truncate){
     int i;
-    StringBuffer result = new StringBuffer();
     String resString;
     int b = 0;
     char[] dummy = new char[1];
-    char[] chars = new char[2+bits.length/(CONST.bitsPerByte)];
+    char[] chars ;
     int j = 0;	
     int counter = 0;
+    int validBits = bits.length;
 
+    if(truncate){
+      i = validBits - 16;
+      // padded with fixed pattern: 1000 1000 1000 1000
+      while( (i > 0) &&
+	     (! (bits[i] && !bits[i+1] && !bits[i+2] && !bits[i+3] &&
+		 bits[i+4] && !bits[i+4+1] && !bits[i+4+2] && !bits[i+4+3] &&
+		 bits[i+8] && !bits[i+8+1] && !bits[i+8+2] && !bits[i+8+3] &&
+		 bits[i+12] && !bits[i+12+1] && !bits[i+12+2] && !bits[i+12+3]
+		 ))){
+	i--;
+      }
+      if(i > 0){
+	validBits = i;
+      }
+    }
+    chars =  new char[(validBits)/(CONST.bitsPerByte)];
+    
     if(CONST.verbose)
       System.err.println("\n -- Output Bits: " + bits.length);
 
-    for(i = 0; i < bits.length; i++){
+    for(i = 0; i < validBits; i++){
 
       b = (2*b);
       if(bits[i])b = (int)(b|1);
@@ -590,32 +622,17 @@ class Base64Handler {
 	chars[j++] = (char)b;
 	counter = 0;
 	b = 0;}}
-    if(counter > 0){// do not ignore leftover bits
+    if((!ignoreLeftoverBits) && (counter > 0)){// do not ignore leftover bits
       b = (int)(((byte)b)<<(CONST.bitsPerByte-counter));
 	chars[j++] = (char)b;
-	//	dummy[0] = (char)b;
-	//	result.append(new String(dummy));
     }
 
     while(j < chars.length)
-	chars[j++] = '\n';	
+	chars[j++] = '\0';	
 
-    result = new StringBuffer(new String(chars));	
 
-    resString = result.toString();
+    resString  = new String(chars);	
 
-    if(truncate){
-      for(i  = result.length() - 1 ;
-	  i >= 0 ;
-	  i--){
-	if(resString.regionMatches(i, CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
-	  if(CONST.verbose || true)
-	    System.out.println(" !  Truncate");	
-	  resString = resString.substring(0, i );
-	  i = -1;
-	}
-      }
-    }
     if(CONST.verbose)
       System.err.println(" -- Output String length: " + resString.length());
 
@@ -707,6 +724,10 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.13  2004/11/10 08:17:08  oli
+ * changed padding: now use bit pattern 1000 1000 1000 1000,
+ * and assume that crypto modules pad with (01|10)*
+ *
  * Revision 1.12  2004/07/12 20:51:50  oli
  * intermediate check-in: some tests fail.
  *

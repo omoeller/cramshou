@@ -3,7 +3,7 @@
 // Key Generation Algorithm
 //
 // Synopsis:
-//  Crypter, a realizatin with the Cramer Shoup Cryptosystem  
+//  Crypter, a realizatin with the Cramer Shoup Cryptosystem
 // /////////////////////////////////////////////////////////////
 // @TABLE OF CONTENTS:                 [TOCD: 19:02 11 Jul 2002]
 //
@@ -16,9 +16,9 @@
 // @FORMAT:  java
 // @AUTHOR:  M. Oliver M'o'ller     <omoeller@verify-it.de>
 // @BEGUN:   Thu Jul 11 10:59:06 2002
-// @VERSION: $Revision: 1.5 $           $Date: 2004/07/14 21:12:51 $
+// @VERSION: $Revision: 1.6 $           $Date: 2004/11/10 08:17:08 $
 // /////////////////////////////////////////////////////////////
-// $Id: KeyGeneratorCS.java,v 1.5 2004/07/14 21:12:51 oli Exp $
+// $Id: KeyGeneratorCS.java,v 1.6 2004/11/10 08:17:08 oli Exp $
 // /////////////////////////////////////////////////////////////
 // @SPELL:   british                    Wed Jul  7 07:43:06 2004
 
@@ -38,7 +38,7 @@ import java.io.OutputStreamWriter;
 
 
 
-//**** from other packages 
+//**** from other packages
 
 //****************************************
 
@@ -57,12 +57,12 @@ public class KeyGeneratorCS  {
   /**
    * Name of this version (should be global for project)
    */
-  public static final String VERSION_NAME = "1.1 $Revision: 1.5 $";
+  public static final String VERSION_NAME = "1.2 $Revision: 1.6 $";
 
   /**
    * Date of last changes
    */
-  public static final String VERSION_DATE = "$Date: 2004/07/14 21:12:51 $";
+  public static final String VERSION_DATE = "$Date: 2004/11/10 08:17:08 $";
 
   /**
    * String describing the version of this API
@@ -85,13 +85,13 @@ public class KeyGeneratorCS  {
    * Name of the geneated key
    */
   private static String keyname = "Chocklate";
-  
+
 
   /**
    * Number of bits in prime p (primeP)
    */
   private static int nbits = -1;
-  
+
 
   /**
    * Large modolus Integer
@@ -108,29 +108,29 @@ public class KeyGeneratorCS  {
    * Generator for the ring modulo primeP
    */
   private static BigInteger g2;
-  
+
   /**
    * Generator for the ring modulo primeP
    */
   private static BigInteger hg1;
-  
+
   /**
    * Generator for the ring modulo primeP
    */
   private static BigInteger hg2;
-  
+
 
   /**
    * Other numbers used in Key Generation
    */
   private static BigInteger c,d,h,x1,x2,y1,y2,z;
-  
+
 
   /**
    * Array of prime factors of (p-1), mixed order
    */
   private static BigInteger[] pMinus1factorization;
-  
+
 
   /**
    * Array of exponents for the prime factors of (p-1),
@@ -145,14 +145,14 @@ public class KeyGeneratorCS  {
   static String filename = null;
 
 
-  static long[] initialPrimes = {2, 3, 5, 7, 11, 13, 17, 19, 23 
+  static long[] initialPrimes = {2, 3, 5, 7, 11, 13, 17, 19, 23
   } ;
 
   private static Vector primes;
 
   private static int primePointer;
-  
-  
+
+
   private static BigInteger const2 =  new BigInteger("2");
   private static BigInteger const3 =  new BigInteger("3");
   private static BigInteger const4 =  new BigInteger("4");
@@ -167,7 +167,7 @@ public class KeyGeneratorCS  {
   private static BigInteger const256 = new BigInteger("256");
   private static BigInteger const2310 = new BigInteger("2310");
 
-  
+
 
   // //////////////////////////////////////////////////////////////////////
   // //////////////////////////  CONSTRUCTORS  ////////////////////////////
@@ -178,12 +178,12 @@ public class KeyGeneratorCS  {
    */
   public KeyGeneratorCS() {
   }
-  
+
   public static void main(String argv [])
     throws java.io.IOException {
     int i = 0;
     int bits = -1;
-    
+
     if(0 == argv.length)
       abort();
 
@@ -194,39 +194,39 @@ public class KeyGeneratorCS  {
 
         switch (argv[i].charAt(1))  {
 
-        case 'f' : 
+        case 'f' :
           if(++i == argv.length)
             abort();
           filename = argv[i];
           break;
 
-        case 'n' : 
+        case 'n' :
           if(++i == argv.length)
             abort();
           keyname = argv[i];
           break;
 
-        case 'o' : 
+        case 'o' :
           if(++i == argv.length)
             abort();
           owner = argv[i];
           break;
 
-        case 'c' : 
+        case 'c' :
           if(++i == argv.length)
             abort();
           certainty = (new Integer(argv[i])).intValue();
-          if(certainty <1) 
+          if(certainty <1)
             abort();
           break;
 
-        case 'h' : 
+        case 'h' :
           printUsage();
           printDescription();
           System.exit(0);
           break;
 
-        default : 
+        default :
           System.out.println("ERROR: unexpected option    " + argv[i]);
           abort();
 
@@ -241,9 +241,9 @@ public class KeyGeneratorCS  {
       }
       i++;
     }
-    if(bits <= 0) 
+    if(bits <= 0)
       abort();
-    
+
       System.out.println("** Number of random bits:    " + bits );
     if( null != filename )
       System.out.println("** Output filename      :    " + filename );
@@ -254,35 +254,35 @@ public class KeyGeneratorCS  {
       System.out.println("** Owner                :    " + owner );
       System.out.println("** Certainty            :    " + certainty );
       System.out.println();
-      
+
     primes = new Vector();
     for(i = 0; i < initialPrimes.length; i++){
       primes.addElement(new BigInteger((new Long(initialPrimes[i])).toString()));
     }
 
-    
+
     OutputStreamWriter sw;
 
     if( null != filename){
-      File f = new File(filename);    
+      File f = new File(filename);
       if(new File(filename).exists()){
         System.out.println("++ Error: file \"" +
                        filename +
                        "\"exists.");
-        System.exit(0);         
+        System.exit(0);
       }
       sw = new FileWriter(f);
     }
     else {
       sw = new OutputStreamWriter(System.out);
     }
-  
+
     createNewKey(bits);
 
     outputCryptoModule(sw);
-    
+
   }
-    
+
   /**
    * Explain the usage (command line)
    */
@@ -304,16 +304,16 @@ public class KeyGeneratorCS  {
    */
   private static void abort(){
     printUsage();
-    
+
     System.exit(0);
   }
-  
-  
+
+
   /**
    * Print the description
    */
   private static void printDescription(){
-    
+
     System.out.println("");
     System.out.println("DESCRIPTION:");
     System.out.println("");
@@ -352,7 +352,7 @@ public class KeyGeneratorCS  {
     System.out.println("      http://www.verify-it.de/sub/crypter.html");
     System.out.println("");
   }
-  
+
 
   // //////////////////////////////////////////////////////////////////////
   // ///////////////////////////// METHODS  ///////////////////////////////
@@ -367,12 +367,12 @@ public class KeyGeneratorCS  {
    *  Creates the complete key
    */
   private static void createNewKey(int bits){
-    
-    System.out.println("-- creating new key with minimum " + bits + " random bits ------------------");  
+
+    System.out.println("-- creating new key with minimum " + bits + " random bits ------------------");
 
     createPrimePair(bits);
     showFactorization();
-    
+
     create4Generator();
     showGenerators();
 
@@ -394,20 +394,20 @@ public class KeyGeneratorCS  {
 
     h = g1.modPow(z, primeP);
 
-    System.out.println("-- key creation finished --------------------------------------------");  
+    System.out.println("-- key creation finished --------------------------------------------");
 
 
   }
-    
+
 
   /**
    * computes a bigger (strong pseudoprim)-number than n
-   * uses Miller-Rabin-Test 
-   * k reflects the number of bits in n 
+   * uses Miller-Rabin-Test
+   * k reflects the number of bits in n
    * (neccessary, for the log of n is not evaluable any more)
-   * 
+   *
    * This function not only computes a prime p but also finds
-   * a prime  p = r*q + 1 for a small r. 
+   * a prime  p = r*q + 1 for a small r.
    */
   private static void createPrimePair(int bits){
 
@@ -415,8 +415,8 @@ public class KeyGeneratorCS  {
       System.out.println(">> Number of given bits too small.");
       System.exit(0);
     }
-    else { 
-      
+    else {
+
       // =========================================
       // [1.1] Create New prime p
       // =========================================
@@ -434,7 +434,7 @@ public class KeyGeneratorCS  {
             (primeQ.mod(const13)).equals(BigInteger.ZERO) ||
             (primeQ.mod(const17)).equals(BigInteger.ZERO) ||
             (primeQ.mod(const19)).equals(BigInteger.ZERO) ||
-            (primeQ.mod(const23)).equals(BigInteger.ZERO) 
+            (primeQ.mod(const23)).equals(BigInteger.ZERO)
             ){
         primeQ = new BigInteger(bits, certainty, rnd);
       }
@@ -443,7 +443,7 @@ public class KeyGeneratorCS  {
       Vector shiftCandidates = new Vector();
 
       shiftCandidates.addElement((primeQ.multiply(const2)).add(BigInteger.ONE));
-      
+
       BigInteger numberP = primeQ.mod(const2310);
 
       BigInteger shift;
@@ -453,7 +453,7 @@ public class KeyGeneratorCS  {
       for(i=2; i < 2310; i++){
         bigI = (new BigInteger((new Integer(i)).toString()));
         shift = (numberP.multiply(bigI));
-        if( 
+        if(
            ((shift.mod(const3)).equals(BigInteger.ONE)) ||
            ((shift.mod(const5)).equals(const2)) ||
            ((shift.mod(const7)).equals(const3)) ||
@@ -465,13 +465,13 @@ public class KeyGeneratorCS  {
           shiftCandidates.addElement(((primeQ.multiply(bigI)).multiply(const2)).subtract((BigInteger)(shiftCandidates.elementAt(shiftCandidates.size() - 1))));
         }
       }
-      
+
       System.out.println("Actual 2310 grid size: " + shiftCandidates.size());
-      
+
 
       BigInteger longJ = BigInteger.ONE;
       boolean notfound = true;
-      
+
       while(notfound){
         System.out.print("=");
 
@@ -479,11 +479,11 @@ public class KeyGeneratorCS  {
         longJ = longJ.add(const2310);
 
         i = 1;
-        
+
         while(i < shiftCandidates.size()){
           if(numberP.isProbablePrime(certainty)){
             notfound = false;
-            i = shiftCandidates.size(); 
+            i = shiftCandidates.size();
           }
           else {
             numberP = numberP.add((BigInteger)shiftCandidates.elementAt(i++));
@@ -491,7 +491,7 @@ public class KeyGeneratorCS  {
           }
         }
       }
-      
+
       System.out.println("");
       System.out.println("Found: p = " + numberP.toString());
       System.out.println("Found: q = " + primeQ.toString());
@@ -501,9 +501,9 @@ public class KeyGeneratorCS  {
       primeP = numberP;
 
       // -- Factorizing p-1 ------------------------------------------------
-  
+
       BigInteger bigN = (numberP.subtract(BigInteger.ONE)).divide(primeQ);
-    
+
       Vector pMinus1Factors = new Vector();
       Vector pMinus1FactorMultiplicity = new Vector();
 
@@ -513,7 +513,7 @@ public class KeyGeneratorCS  {
       initPrimes();
 
       BigInteger pp = nextSmallestPrime();
-      
+
       while(!bigN.equals(BigInteger.ONE)){
         if((bigN.mod(pp)).equals(BigInteger.ZERO)){
           int j = 1;
@@ -539,16 +539,16 @@ public class KeyGeneratorCS  {
       }
 
     }
-  } 
+  }
 
   /**
   * generates a 4-tuple (g1 g2 hg1 hg2) where
   * g1, g2, hg1, hg2  are generators of Z_p^*
-  * This implementation relying on ORDinG and PRIMEL is due to 
+  * This implementation relying on ORDinG and PRIMEL is due to
   * L"uneburg, Heinz: On the rational normal form of endomorphisms. A primer
   * to constructive algebra. Mannheim/Wien/Zuerich: B.I.-Wissenschaftsverlag.
   * 1987, chapter XIII.
-  * 
+  *
   * In addition, it projects generators down to (2... p/2) -
   * If g is a generator, then also -g is (!)
   */
@@ -574,10 +574,10 @@ public class KeyGeneratorCS  {
    * computes order of a element
    */
   private static BigInteger ordInG(BigInteger x){
-    
+
     BigInteger ord = primeP.subtract(BigInteger.ONE);
     int j = 0;
-    
+
     for(int i = 0; i < pMinus1factorization.length; i++){
       System.out.print("*");
       for(j = 1; j < pMinus1factorizationExponents[i]; j++){
@@ -604,34 +604,34 @@ public class KeyGeneratorCS  {
       BigInteger p1 = primeP.subtract(BigInteger.ONE);
       BigInteger p3 = primeP.subtract(const3);
       BigInteger prim =
-      ((new BigInteger(nbits, new Random())).mod(p3)).add(const2); 
+      ((new BigInteger(nbits, new Random())).mod(p3)).add(const2);
       BigInteger ord = ordInG(prim);
       BigInteger y;
       BigInteger ordy;
       BigInteger c;
       BigInteger s;
       BigInteger ss;
-      
-      
+
+
       System.out.print("--ok--");
       while(-1 == ord.compareTo(primeP.subtract(BigInteger.ONE))){
-        y = ((new BigInteger(nbits, new Random())).mod(p3)).add(const2); 
+        y = ((new BigInteger(nbits, new Random())).mod(p3)).add(const2);
         ordy = ordInG(y);
         c = ordy.gcd(ord);
         s = ord.mod(ordy.divide(c));
-        
+
         if(ordy.equals(p1)){
           prim = y;
-          ord = ordy; 
+          ord = ordy;
         }
         else {
-        
+
           if ( (-1 == c.compareTo(ordy)) &&
                (-1 == (BigInteger.ZERO).compareTo(s))
              ){
             ss = ordy.mod(ord.divide(c));
             ss = ss.divide(ss.gcd(s));
-            prim = prim.modPow(ord.divide(s), 
+            prim = prim.modPow(ord.divide(s),
                                primeP);
             prim = (prim.multiply(y.modPow(ordy.divide(ss),
                                            primeP))
@@ -654,10 +654,10 @@ public class KeyGeneratorCS  {
   private static BigInteger projectDown(BigInteger gen, BigInteger p){
   if(-1 == (p.divide(const2)).compareTo(gen))
     return p.subtract(gen);
-  else 
+  else
     return gen;
   }
-  
+
 
   /**
    * Initialize nextSmallestPrime
@@ -665,9 +665,9 @@ public class KeyGeneratorCS  {
   private static void initPrimes(){
       primePointer = 0;
   }
-  
 
-  
+
+
   private static BigInteger nextSmallestPrime(){
     if(primePointer < primes.size() )
       return (BigInteger)primes.elementAt(primePointer++);
@@ -684,10 +684,10 @@ public class KeyGeneratorCS  {
           i++;
         }
       }
-      
+
       System.out.print(newPrime.toString());
       primes.addElement(newPrime);
-            
+
       return newPrime;
     }
   }
@@ -1058,8 +1058,13 @@ public class KeyGeneratorCS  {
     os.write("          index = 0;\n");
     os.write("          while((index < el)&&(pointer < messageLength))\n");
     os.write("              mChunk[index++] = message[pointer++];\n");
-    os.write("          while(index < el) // fill with random bits\n");
-    os.write("              mChunk[index++] = ( (rnd.nextInt() & 1) == 1);\n");
+    os.write("		while(index + 1 < el){ // fill with random 01/10 bits\n");
+    os.write("		    mChunk[index] = ( (rnd.nextInt() & 1) == 1);\n");
+    os.write("		    mChunk[index+1] = !mChunk[index];\n");
+    os.write("		    index = index + 2;\n");
+    os.write("		}\n");
+    os.write("          if(index < el)\n");
+    os.write("            mChunk[index] = true;\n");
     os.write("          m  = bits2BigInteger(mChunk);\n");
     os.write("          if(m.equals(BigInteger.ZERO)){ // avoid to encrypt a '0'.\n");
     os.write("              mChunk[el] = true;         // instead fill throwaway-bit\n");
@@ -1119,7 +1124,7 @@ public class KeyGeneratorCS  {
     os.write("      alpha = hashBitList(sk.k,sk.p,sk.hash,bitListThree(sk.k,u1,u2,e));\n");
     os.write("      \n");
     //    os.write("        if(u1.equals(BigInteger.ZERO)){ System.out.println(\"WARNING: u1 is zero!!!!\"); }\n");
-    
+
     os.write("      if((v.equals(((u1.modPow(sk.x1.add(alpha.multiply(sk.y1)),sk.p)                    ).multiply(u2.modPow(sk.x2.add(alpha.multiply(sk.y2)),sk.p))).mod(sk.p))))\n");
     os.write("          {\n");
     os.write("		    if(u1.equals(BigInteger.ZERO))\n");
