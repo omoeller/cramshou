@@ -2,7 +2,7 @@
 /***********************************************************************
  * @(#)Crypter.java   
  *
- * Requires: java 1.1.5 (or higher)
+ * Requires: java 1.4.2 (or higher)
  *
  * No Copyright (!c)
  *
@@ -40,6 +40,14 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
+import java.nio.charset.Charset;
+
 
 // ==== Here is the Cryptographic Algorithm:
 // import CryptoModule;   
@@ -50,7 +58,7 @@ import java.io.FileWriter;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "1.6.2alpha";
+  final static String  version    = "2.0." + new String("$Revision: 1.8 $").substring(13).replace('$',' ');
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
@@ -66,7 +74,7 @@ class CONST {
  * 
  * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:49:25%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  1.6.2                   Fri Feb  7 23:51:58 2003
+ * @version  1.6.2                   Tue Jul  6 22:05:44 2004
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -96,7 +104,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
     setBackground(lightGray);
     
     listener = new Listener();
-    listener.show();
+    //listener.show();
     
     topLabel = new Label("-- Crypter " + CONST.version + " - Key: " + 
 			 extractKeyName(cm.keyNameString)
@@ -240,70 +248,108 @@ public class Crypter extends java.applet.Applet implements Runnable {
 	if( (nBits < 7) || (nBits > 17)){
 	  throw new Exception("ERROR: number of bits set to an illegal value (" + nBits + ").");
 	}
-	System.out.println("** using " + nBits + " bits per charakter.");
+	System.err.println("** using " + nBits + " bits per charakter.");
 	CONST.bitsPerByte = nBits;
 	argCount++;
       }
 
       String inFileName = argv[argCount++];
       String outFileName = "";
-      if(argv.length >= argCount)
+      String clearTextCharset;
+      String inCharset;
+      String outCharset;
+
+      if(argv.length > argCount)
 	outFileName= argv[argCount];
 
-      FileReader in = new FileReader(new File(inFileName));
+      switch(CONST.bitsPerByte){
+      case 7: 
+	clearTextCharset  = "US-ASCII";
+	break;
+      case 8:
+	clearTextCharset = "ISO-8859-1";
+	break;
+      default:
+	clearTextCharset = "UTF-16BE";
+      }
+
       StringBuffer inString = new StringBuffer();
       String outString = "*";
       char c;
       char[] cs = new char[1];
       int i = 0;	
-      while(in.ready()){
-	c = (char)in.read();
-	cs[0] = c;
-	//cs[0] = (char)(65535&(int)c);
-	//cs[0] = (char)(255&(int)c);
-	//System.out.print(cs);
-	//System.out.println("  " + (++i) + "  " + (int)cs[0]);
 
-	inString.append(cs); }
+      InputStreamReader in ;
+      OutputStream dos;
+      OutputStreamWriter dosw;
+      
+      // -- determine int/out charsets -------------------------
+      if(  command.equals("e") || command.equals("encrypt")) {
+	
+	inCharset  = clearTextCharset;
+	outCharset = "US-ASCII";
+
+      }
+      else if(  command.equals("d") || command.equals("decrypt") ||
+		command.equals("u") || command.equals("untruncated-decrypt") ){
+
+	inCharset  = "US-ASCII";
+	outCharset = clearTextCharset;
+
+      }
+      else throw new Exception("ERROR: Unknown command >>" + command + "<<");
+
+      // -- read input -----------------------------------------
+      in =  new InputStreamReader(new FileInputStream(new File(inFileName)),
+				  inCharset);
+      System.err.println("** Reading stream with encoding " + in.getEncoding());
+      while(in.ready()){
+	in.read(cs, 0, 1);
+	inString.append(cs); 
+      }
+      
       // -- execute ---------------------------------------------
       if(  command.equals("e") || command.equals("encrypt") ){
-	System.out.print("** Encrypting...");
 
-	// --
-	for(i=0; i < inString.length(); i++){
-	//	System.out.println("  " + (i+1) + "  " + (int)inString.charAt(i));
-	}
-	// --
 
+	System.err.print("** Encrypting...");
 	outString = 
 	  cm.keyNameString +
 	  b64.bits2base64(cm.encrypt(b64.string2bits(inString.toString() +  CONST.TERMINATOR + "\n" )));
       } 
       else if(  command.equals("d") || command.equals("decrypt") ){
-	System.out.print("** Decrypting...");
+
+	System.err.print("** Decrypting...");
 	outString = 
 	  b64.bits2stringTruncate(cm.decrypt(b64.base642bits(inString.toString())),
 				  true);
       }
       else if(  command.equals("u") || command.equals("untruncated-decrypt") ){
-	System.out.print("** Decrypting (without truncation)...");
+
+	System.err.print("** Decrypting (without truncation)...");
 	outString = 
 	  b64.bits2stringTruncate(cm.decrypt(b64.base642bits(inString.toString())),
 				  false);
       }
       else throw new Exception("ERROR: Unknown command >>" + command + "<<");
 
-      System.out.println("done.");
+      System.err.println("done.");
+
       // -- output result ---------------------------------------
+
       if(outFileName.equals("")){
-	System.out.println(outString);
-      } 
-      else {
-	FileWriter out = new FileWriter(new File(outFileName));
-	out.write(outString);
-	out.close();
-	System.out.println();
+	dos = System.out;
       }
+      else {
+	dos = new FileOutputStream(new File(outFileName));
+      }
+      
+      dosw = new OutputStreamWriter(dos, outCharset);
+
+      System.err.println("** Writing stream with encoding " + dosw.getEncoding());
+      dosw.write(outString);
+      dosw.close();
+      System.out.println();
     }
     catch (Exception e){
       e.printStackTrace();
@@ -472,11 +518,12 @@ class Base64Handler {
   public static boolean[] string2bits(String s){
     boolean[] bits = new boolean[s.length()*CONST.bitsPerByte];
     
-    int i;
-    int count = 0;
-    long b;
+    int  i;
+    int  count = 0;
+    char b;
+
     for(i = 0; i< s.length(); i++){
-      b = (long)s.charAt(i);
+      b = (char)s.charAt(i);
 
       if(CONST.bitsPerByte > 17)
 	bits[count++] = ((b & 131072) != 0);
@@ -499,7 +546,8 @@ class Base64Handler {
       if(CONST.bitsPerByte > 8)
 	bits[count++] = ((b & 256) != 0);
       if(CONST.bitsPerByte > 7)
-	bits[count++] = ((b & 128) != 0);
+	bits[count++] = ((b & 128) != 0) ;
+
       bits[count++] = ((b &  64) != 0);
       bits[count++] = ((b &  32) != 0);
       bits[count++] = ((b &  16) != 0);
@@ -572,6 +620,7 @@ class Base64Handler {
     }
     if(CONST.verbose)
       System.err.println(" -- Output String length: " + resString.length());
+
     
     return resString;
   }
@@ -660,6 +709,10 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.8  2004/07/06 23:17:17  oli
+ * changed: use java.nio (Java 1.4.2 or higher) to ensure
+ * 	 proper clear text file encoding
+ *
  * Revision 1.7  2003/02/07 22:52:25  oli
  * cosmetic byte -> char
  *

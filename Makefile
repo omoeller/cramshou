@@ -51,24 +51,24 @@ clean:
 ## ###################################################################
 
 %.class:	%.java
-	javac $< ;
+	javac -deprecation $< ;
 
 
 ## ###################################################################
 ## [2] Test
 ## ###################################################################
 
-.PHONEY:  test
+.PHONEY:  test test_ordinary test_binary
 
-test:	 test_binary test_ordinary
+test:	 test_ordinary test_binary 
 
 test_binary: $(OBJECT_FILES)
 	@if [ ! -d tmp ]; then mkdir tmp; fi ;
-	cp binary.in ./tmp/test.in ; \
-	date >> ./tmp/test.in ; \
-	java Crypter e -$(TEST_BITS) ./tmp/test.in ./tmp/test.out ; \
-	java Crypter d -$(TEST_BITS) ./tmp/test.out ./tmp/test.decrypted ; \
-	if cmp -c ./tmp/test.in ./tmp/test.decrypted; then \
+	@cp binary.in ./tmp/test.in ; 
+	@date >> ./tmp/test.in ; 
+	java Crypter e -$(TEST_BITS) ./tmp/test.in  ./tmp/test.out ; 
+	java Crypter d -$(TEST_BITS) ./tmp/test.out > ./tmp/test.decrypted ; 
+	@if cmp -c ./tmp/test.in ./tmp/test.decrypted; then \
 		echo "** Test successful." ; \
 	else \
 		echo "** Test FAILED!" ; \
@@ -78,7 +78,7 @@ test_binary: $(OBJECT_FILES)
 
 test_ordinary: $(OBJECT_FILES)
 	@if [ ! -d tmp ]; then mkdir tmp; fi ;
-	cp ordinary.in ./tmp/ordinary.in ; \
+	cp ordinary.in ./tmp/test.in ; \
 	date >> ./tmp/test.in ; \
 	java Crypter e -$(TEST_BITS) ./tmp/test.in ./tmp/test.out ; \
 	java Crypter d -$(TEST_BITS) ./tmp/test.out ./tmp/test.decrypted ; \
