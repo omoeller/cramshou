@@ -12,11 +12,13 @@
 //  [2] Print Results
 // ==========================================================
 // @FILE:    KeyGeneratorCS.java
-// @PLACE:   Linux Homestation
+// @PLACE:   Mars Workstation
 // @FORMAT:  java
 // @AUTHOR:  M. Oliver M'o'ller     <omoeller@verify-it.de>
 // @BEGUN:   Thu Jul 11 10:59:06 2002
-// @VERSION: 1.0alpha Sun Jul 14 23:45:35 2002
+// @VERSION: 1.0alpha Fri Jul  2 21:56:08 2004
+// /////////////////////////////////////////////////////////////
+// $Id: KeyGeneratorCS.java,v 1.2 2004/07/06 20:46:31 oli Exp $
 // /////////////////////////////////////////////////////////////
 // @SPELL:   american 			Thu Jul 11 22:29:19 2002
 
@@ -55,12 +57,12 @@ public class KeyGeneratorCS  {
   /**
    * Name of this version (should be global for project)
    */
-  public static final String VERSION_NAME = "1.0alpha";
+  public static final String VERSION_NAME = "1.1 $Revision: 1.2 $";
 
   /**
    * Date of last changes
    */
-  public static final String VERSION_DATE = "Sun Jul 14 23:45:35 2002";
+  public static final String VERSION_DATE = "$Date: 2004/07/06 20:46:31 $";
 
   /**
    * String describing the version of this API
@@ -191,43 +193,42 @@ public class KeyGeneratorCS  {
 	  abort();
 
 	switch (argv[i].charAt(1))  {
-	case 'f' : {
+
+	case 'f' : 
 	  if(++i == argv.length)
 	    abort();
 	  filename = argv[i];
 	  break;
-	};
-	case 'n' : {
+
+	case 'n' : 
 	  if(++i == argv.length)
 	    abort();
 	  keyname = argv[i];
 	  break;
-	};
-	case 'o' : {
+
+	case 'o' : 
 	  if(++i == argv.length)
 	    abort();
 	  owner = argv[i];
 	  break;
-	};
- 	case 'c' : {
+
+ 	case 'c' : 
 	  if(++i == argv.length)
 	    abort();
 	  certainty = (new Integer(argv[i])).intValue();
 	  if(certainty <1) 
 	    abort();
 	  break;
-	};
-	case 'h' : {
+
+	case 'h' : 
 	  printUsage();
 	  printDescription();
 	  System.exit(0);
 	  break;
-	};
-	
-	default : { 
+
+	default : 
 	  System.out.println("ERROR: unexpected option    " + argv[i]);
 	  abort();
-	}
 
 	}
       }
