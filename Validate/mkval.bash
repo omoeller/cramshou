@@ -101,8 +101,9 @@ cp ../.millstone/MillstoneCryptoModule.java Millstone-5020.public.java
 cp ../.millstone/MillstoneCryptoModule.class Millstone-5020.public.class
 cp ../.millstone/MillstoneCrypter.java  MillstoneCrypter.java
 cp ../.millstone/MillstoneCrypter.class MillstoneCrypter.class
+cp ../testCrypter.zip testCrypter.zip 
 ## -- creating validation script --------------------------------
-ARCHIV_FILES="*.class *.java"
+ARCHIV_FILES="*.class *.java *.zip"
 echo "# !/usr/local/bin/bash" > $EXEC_FILE
 echo -n "LINE=" >> $EXEC_FILE
 echo $(($(cat $IN_FILE | wc -l)+1)) >> $EXEC_FILE

@@ -54,7 +54,9 @@ VAL[17]=KeyGeneratorCS.java
 CMP[17]=~/tmp/KeyGeneratorCS.java 
 VAL[18]=KeyGeneratorCS.class
 CMP[18]=~/tmp/KeyGeneratorCS.class
-N=18;
+VAL[19]=testCrypter.zip
+CMP[19]=~/tmp/testCrypter.zip
+N=19;
 ## --------------------
 TEMP=./__compare_file.$$
 ## --
