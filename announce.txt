@@ -39,7 +39,7 @@ b. a Java front-end that allows inclusion of the algorithm in a HTML page
    crypto-text.  The same front-end can be used to encrypt/decrypt files
    from command line
 c. a key generation algorithm (again, in Java) that generates a compile-able
-   CrytoModule.java file, containing both public and secret key.
+   CrytoModule.java file, which contains the public and the secret key.
 
 If you want to try it from command line, you need a working Java environment
 (1.1.4 or higher) and follow the following steps:
