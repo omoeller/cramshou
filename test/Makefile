@@ -1,7 +1,8 @@
 
-N_TO_TEST=7 8 
-KEY_LENGTHS_TO_TEST=12
-MESSAGE_LENGTHS_TO_TEST=19 20 21
+N_TO_TEST=7
+KEY_LENGTHS_TO_TEST=834
+#MESSAGE_LENGTHS_TO_TEST=3 4 5 31 32 34
+MESSAGE_LENGTHS_TO_TEST=10 100 200 300 500
 
 .PHONEY: check save cleansave
 
@@ -33,7 +34,7 @@ check:
 ## ###################################################################
 
 save:
-	@export NUM=$$((1+$$(ls | grep "tmp[.][0-9][0-9][0-9]" |sort | tail -c 3))) ; \
+	@export NUM=$$(($$(echo "1`ls | grep "tmp[.][0-9][0-9][0-9]" |sort | tail -c 4`")-999)) ; \
 	export DIR="tmp.$$(printf "%03d" $${NUM})"; \
 	echo "## SAVING IN DIR $${DIR} "; \
 	mkdir $${DIR}; \
