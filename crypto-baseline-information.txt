@@ -1,0 +1,10 @@
+
+-----------------------------------------------------------------
+
+CRYPTER_REL_1_6_2_alpha : classic crypter, without java.nio
+			  (compatible with Java 1.1.5)
+			  does not support > 7 bit input characters on
+			  newer platforms
+			  2004-06-07
+
+-----------------------------------------------------------------
