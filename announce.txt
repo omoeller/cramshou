@@ -5,9 +5,10 @@
 ## Synopsis:
 ##  Cramer Shoup Crypto System
 ## #############################################################
-## @TABLE OF CONTENTS:		       [TOCD: 14:15 18 Jul 2004]
+## @TABLE OF CONTENTS:		       [TOCD: 12:10 21 Nov 2004]
 ##
-##  [1] 2004: (planned)
+##  [1] 2004-09? (done, but reply was lost)
+##  [2] 2004-11-21
 ## ##########################################################
 ## @FILE:    announce.txt
 ## @PLACE:   Linux Homestation
@@ -16,12 +17,12 @@
 ## @BEGUN:   Sun Jul 18 13:32:28 2004
 ## @VERSION: Sun Jul 18 14:22:07 2004
 ## #############################################################
-## @SPELL:   british 			Sun Jul 18 14:13:30 2004
+## @SPELL:   british 			Sun Nov 21 12:10:09 2004
 
 Announcements in Usegroups:
 
 ## ###################################################################
-## [1] 2004: (planned)
+## [1] 2004-09? (done, but reply was lost)
 ## ###################################################################
 
 Subject: Java Implementation: Cramer-Shoup 98 Crypto System
@@ -112,4 +113,97 @@ References:
 
 - oli						       http://www.verify-it.de
 *com-pu-ter*: device to enhance our capability to err. <omoeller@verify-it.de>
+
+
+## ###################################################################
+## [2] 2004-11-21: posted in sci.crypt via server 'news'
+## ###################################################################
+
+From: Oliver Moeller <omoeller@verify-it.de>
+Subject: Padding Question (Cramer-Shoup 98 Crypto System)
+
+Hello Crypto-Community.
+
+I have a Java implementation of Cramer-Shoup 98 Crypto System (see links
+below). Version 2.1 now guarantees to de-crypt to the original message by
+introducing a safe way to pad the clear text message up to the required block
+size.
+
+They padding I chose is rather straightforward:
+
+(I)
+Always append a bit pattern of fixed (16 bits) length:
+    1000 1000 1000 1000 
+The encryption does pad the message with a pattern (01|10)*[0]?, where
+01 / 10 are picked uniformly random.
+
+For n > 16 (realistic values are around 2000), this reduces the number of
+messages from 2^n to (at least) 2^((n-16)/2).
+
+Lets assume the somewhat "worst case": 
+The clear text message contains only 1 bit, the 'random' tail is of length
+n-1. Then only the fraction 0.5*(n-17)/n of clear text messages have to be
+considered in order to distinguish message '0' and message '1'.
+
+This fraction is close to 0.5, so for practical matters this is not too bad.
+In case of Cramer-Shoup, where a library of pre-computed cipher-texts do not
+help (much), my claim is that this does not compromise security.
+
+However, I have the feeling that there is a better way to do this.
+My last lecture on Cryptography was in 2000, so I had a look at the omniscient
+garbage dump for 'cryptographic padding' and found PKCS5:
+
+(II)
+## -- quote from http://www.chilkatsoft.com/faq/PKCS5_Padding.html 
+ PKCS#5 padding works as follows: the bytes remaining to fill a block are
+ assigned a number, which is the number of bytes that were added to fill the
+ block. For instance, if we have an 16-byte block, and only 11 bytes are
+ filled, then we have 5 bytes to pad. Those 5 bytes are all assigned the value
+ "5", for the 5 bytes of padding.
+
+For the 1-bit example (assuming the attacker guesses that there is only 1
+bit), it seems to be horribly bad (you can readily construct a library of
+cipher-texts).
+
+
+My Questions:
+(1) Is (I) an acceptable way to pad? 
+(2) Is (II) PKCS5 better than padding with 10* ? 
+(3) Is there a suggested or even 'optimal' way to pad?
+
+Thanks.
+
+--
+
+About the Java Implementation of Cramer-Shoup 98:
+
+Though I do not assume this being a research topic, I'd like to point out some
+(IMHO) interesting features of this implementation.
+
+1. A Java front-end allows inclusion of the algorithm (and your public key) in
+   a HTML page via an Applet. 
+2. The same front-end can be used to encrypt/decrypt files from command line
+3. The implementation is fairly small and can be realistically checked for
+   correctness by manual code-inspection.
+
+Resources:
+A test suite for the implementation (including the key-generator) is
+available. After un-zipping, call 'make' to generate a number of keys and test
+proper en/de-cryption of random messages. This will abort if clear text
+message and de-crypted cipher-text differ.
+  http://www.verify-it.de/sub/testCrypter.zip
+
+More information can be found at 
+  http://www.verify-it.de/sub/cramer_shoup.html
+
+References:
+[CS98] Ronald Cramer and Victor Shoup: 
+       A practical public key crypto system provably secure against adaptive
+       chosen ciphertext attack. 
+       in proceedings of Crypto 1998, LNCS 1462, p.13ff
+
+- oli						       http://www.verify-it.de
+*com-pu-ter*: device to enhance our capability to err. <omoeller@verify-it.de>
+
+
 
