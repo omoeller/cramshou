@@ -274,7 +274,7 @@ public class ToyCryptoModule {
 	 * concatenation of encryption blocks
 	 *        [u1 u2 e v]
 	 * Since the (bit-)length of each component of the block is given
-	 * with k, it is not necessary to encapsulate those additionally.
+	 * with k, it is not neccessary to encapsulate those additionally.
 	 **************************************************/
 	    
 	    int messageLength = message.length;
@@ -282,8 +282,7 @@ public class ToyCryptoModule {
 	    int i;
 	    int toEncrypt     = (1+ (message.length / el))*pk.k*4;
 	    boolean[] mChunk  = new boolean[pk.k];
-	    mChunk[pk.k-1] = false;      // ignore most significant bit
-	    //	    mChunk[0] = false;      // ignore most significant bit
+	    mChunk[el] = false; // force positive number
 	    boolean[] cChunk  = new boolean[pk.k*4];
 	    boolean[] res     = new boolean[toEncrypt];
 	    int resIndex      = 0;
@@ -298,9 +297,19 @@ public class ToyCryptoModule {
 		index = 0;
 		while((index < el)&&(pointer < messageLength))
 		    mChunk[index++] = message[pointer++];
-		while(index < el) // fill with random bits
-		    mChunk[index++] = ( (rnd.nextInt() & 1) == 1);
+		while(index + 1 < el){ // fill with random 01/10 bits
+		    mChunk[index] = ( (rnd.nextInt() & 1) == 1);
+		    mChunk[index+1] = !mChunk[index];
+		    index = index + 2;
+		}
+		if(index < el)
+		    mChunk[index] = true;
+		
 		m  = bits2BigInteger(mChunk);
+		if(m.equals(BigInteger.ZERO)){ // avoid to encrypt a '0'.
+		    mChunk[el] = true; 	       // instead fill throwaway-bit
+		    m = bits2BigInteger(mChunk);
+		}
 
 		r = bigRandom(pk.k+1).mod(pk.p);
 		u1 = pk.g1.modPow(r,pk.p);
@@ -337,7 +346,7 @@ public class ToyCryptoModule {
 	BigInteger zeroBig = new BigInteger(zero); // will be returned, if key is faulty
 	BigInteger u1,u2,e,v,alpha,m;
 
-	while(index+(4*sk.k) < len){ // only decrypt complete blocks
+	while(index+(4*sk.k) <= len){ // only decrypt complete blocks
 	    // Copy --- with all bits.
 	    for(i = 0; i< sk.k; i++)
 		cChunk[i] = cryptoText[index++];
@@ -356,7 +365,10 @@ public class ToyCryptoModule {
 	    
 	    if((v.equals(((u1.modPow(sk.x1.add(alpha.multiply(sk.y1)),sk.p)                    ).multiply(u2.modPow(sk.x2.add(alpha.multiply(sk.y2)),sk.p))).mod(sk.p))))
 		{
-		    m = (e.multiply((u1.modPow(sk.z,sk.p)).modInverse(sk.p))).mod(sk.p);
+		    if(u1.equals(BigInteger.ZERO))
+			m = BigInteger.ZERO;
+		    else
+		        m = (e.multiply((u1.modPow(sk.z,sk.p)).modInverse(sk.p))).mod(sk.p);
 		    cChunk = bigInteger2bits(sk.k, m);
 		    for(i = 0; i < sk.k - 1; i++) // ignore most significant bit
 			res[resIndex++] = cChunk[i];
@@ -374,6 +386,7 @@ public class ToyCryptoModule {
 /**
  * Auxillary data structure for hash function
  * 
+ * @version $Revision: 1.2 $	$Date: 2004/11/20 18:12:16 $
  */
 class HashFunction {
     BigInteger hash_g1;
@@ -391,12 +404,8 @@ class HashFunction {
  *
  * The variable names used correspond to the ones in [CS98]
  *
+ * @version $Revision: 1.2 $      $Date: 2004/11/20 18:12:16 $
  */
-
-
-
-
-
 
 
 class SecretKey {
