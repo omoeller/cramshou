@@ -49,11 +49,11 @@ import CryptoModule;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "1.6.0";
+  final static String  version    = "1.6.1";
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
-  public static boolean verbose = true;
+  public static boolean verbose = false;
   public static int bitsPerByte = 8;
 }
 
@@ -63,9 +63,9 @@ class CONST {
  * 
  * It will call en/decryption 
  * 
- * @author <A HREF="MAILTO:oliver.moeller@verified.de?subject=Crypter.java%20(1.6%20Thu%20Feb%206%2021:52:19%202003)">M. Oliver M&ouml;ller</A>
+ * @author <A HREF="MAILTO:oliver.moeller@verified.de?subject=Crypter.java%20(1.6%20Thu%20Feb%206%2023:43:35%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  1.6                     Thu Feb  6 23:24:05 2003
+ * @version  1.6                     Fri Feb  7 00:02:51 2003
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -236,7 +236,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
 
       if((argv[argCount]).startsWith("-")){
 	int nBits = - (new Integer(argv[argCount])).intValue();
-	if( (nBits < 7) || (nBits > 16)){
+	if( (nBits < 7) || (nBits > 17)){
 	  throw new Exception("ERROR: number of bits set to an illegal value (" + nBits + ").");
 	}
 	System.out.println("** using " + nBits + " bits per charakter.");
@@ -315,7 +315,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
     System.out.println("  COMMAND: one of e (encrypt) or d  (decrypt)");
     System.out.println("               or u (untruncated-decrypt)");
     System.out.println("  INFILE can contain any sort of data.");
-    System.out.println("  If option -NAT is set with 7 <= NAT <= 16,");
+    System.out.println("  If option -NAT is set with 7 <= NAT <= 17,");
     System.out.println("     a char has NAT bits (both for en/decryption).");
     System.out.println("  If no OUTFILE is specified, the output goes to <stdout>.");
 
@@ -659,9 +659,13 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.5  2003/02/07 07:24:50  oli
+ * included automatic truncation after TERMINATOR string
+ *
  * Revision 1.4  2003/02/06 22:25:41  oli
  * generalizes n-bits option; changed TERMINATOR string
  *
+ * -- Log of changes from older versions --
  *
  * 1.5:  updated to verify-it.default
  * 1.4 : added main() method for command-line exectution
