@@ -7,20 +7,64 @@ if [ -z "$2" ]; then
    exit 1;
 fi;
 
+# $1 : n
+# $2 : filename
+# $3 : (optional) minimal value [only if $4 is set, too]
+# $4 : (optional) maximal value
+function n_random_chars_to_file {
+  local MAXIMAL;
+  local MINIMAL;
+  local I;
+  local COUNT ;
+  
+  if [ -z "$4" ]; then
+    MINIMAL=0x00 ;
+    MAXIMAL=0xFF ;
+  else
+    MINIMAL=$3 ;
+    MAXIMAL=$4 ;
+  fi;
+
+  if [ -z "$2" ]; then
+    echo "** ERROR: n_random_chars_to_file: need second argument." ;
+    exit 2;
+  fi;
+  if [ -e "$2" ]; then
+    echo "** ERROR: target file \"$2\" does already exist - refuse to overwrite."
+    exit 3;
+  fi;
+  
+  if [ ${MINIMAL} -eq 0x00 ] && [ ${MAXIMAL} -eq 0xFF ] &&  [ -e /dev/random ]; then
+    head -c $1 /dev/random > $2 ;	    
+  else
+    ## only use pseudo-random chars
+  
+    export LIM=65003 ; # a prime number
+    export K=7;
+    export L=13;
+    export I=$((`date +"%s"` % ${LIM})); # seed depending on time of day
+    export COUNT=0;
+
+    while [ ${COUNT} -lt ${1} ]; do
+      export I=$((($K+${I}*${L}) % ${LIM}));
+      #echo $(printf %02x $((${MINIMAL}+ (${I} % (${MAXIMAL}-${MINIMAL} + 1)))))
+      printf "\x$(printf %02x $((${MINIMAL} + (${I} % (${MAXIMAL}-${MINIMAL} + 1)))) )" >> $2;
+      export COUNT=$(($COUNT+1));
+    done;
+  fi;
+}
+
+
 rm -f message.txt message.enc message.dec;
-if [ ${N_BITS} -ge 8 ]; then
-  head -c ${MESSAGE_LENGTH} /dev/random > message.txt ;
+if [ ${N_BITS} -gt 8 ]; then
+  n_random_chars_to_file $((2 * ${MESSAGE_LENGTH})) message.txt ;
 else
-  # restrict to some ASCII pseudorandom ;	
-  export STRING="abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%^&()-=[]{}.,~";
-  export LIM=${#STRING};
-  export POS=$((`date +"%s"` % ${LIM}));
-  export I=1;
-  while [ $I -le ${MESSAGE_LENGTH} ]; do
-    echo -n ${STRING:${POS}:1} >> message.txt ;
-    export I=$(($I+1));
-    export POS=$(((7+${POS}*3) % ${LIM}));
-  done ;
+  if [ ${N_BITS} -eq 8 ]; then
+    n_random_chars_to_file ${MESSAGE_LENGTH} message.txt ;
+  else
+    # restrict to some ASCII chars ;
+    n_random_chars_to_file ${MESSAGE_LENGTH} message.txt 0x20 0x7F ;
+  fi;
 fi;
 
 sync ;
