@@ -1,6 +1,15 @@
 
 -----------------------------------------------------------------
 
+CRYPTER_REL_2_0_8 : Java 1.4.2. or higher (due to java.nio)
+		    uses proper encoding for clear text files
+		    recommended: 8 bits/byte.
+		    2004-06-08
+
+-----------------------------------------------------------------
+
+-----------------------------------------------------------------
+
 CRYPTER_REL_1_6_2_alpha : classic crypter, without java.nio
 			  (compatible with Java 1.1.5)
 			  does not support > 7 bit input characters on
