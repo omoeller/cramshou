@@ -1,6 +1,6 @@
 // -*- mode: JDE; c-file-style: \"stroustrup\"; c-basic-offset: 2; -*-
 /***********************************************************************
- * @(#)Crypter.java   1.5
+ * @(#)Crypter.java   
  *
  * Requires: java 1.1.5 (or higher)
  *
@@ -49,8 +49,11 @@ import CryptoModule;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String version    = "1.5";
-  final static String TERMINATOR = "\n*\n"; 
+  final static String  version    = "1.6";
+  final static String  TERMINATOR = "\n*\n"; 
+
+  public static boolean truncateAfterTERMINATOR;
+  public static int bitsPerByte = 9;
 }
 
 /************************************************************
@@ -59,9 +62,9 @@ class CONST {
  * 
  * It will call en/decryption 
  * 
- * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.5%20Sun%20Jul%2014%2023:37:47%202002)">M. Oliver M&ouml;ller</A>
+ * @author <A HREF="MAILTO:oliver.moeller@verified.de?subject=Crypter.java%20(1.6%20Tue%20Feb%204%2000:26:54%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  1.5                     Sun Jul 14 23:39:51 2002
+ * @version  1.6                     Tue Feb  4 01:13:03 2003
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -76,6 +79,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
   private CryptoModule cm;
   
   public String dummy;
+
 
   /**
    * Initialize the applet.
@@ -198,7 +202,8 @@ public class Crypter extends java.applet.Applet implements Runnable {
 	listener.inputArea.setText("");
 	repaint();
 	listener.inputArea.setText(// "Derived Message Text:\n\n" +
-				   b64.bits2string(cm.decrypt(b64.base642bits(listener.outputArea.getText()))));
+				   b64.bits2stringTruncate(cm.decrypt(b64.base642bits(listener.outputArea.getText())),
+							   CONST.truncateAfterTERMINATOR));
 	listener.messageLabel.setText("--- Decryption finished.");
       }
       else if (buttonName.equalsIgnoreCase("Email Cryptotext")){
@@ -223,13 +228,20 @@ public class Crypter extends java.applet.Applet implements Runnable {
     try {
       Base64Handler b64 = new Base64Handler();
       CryptoModule  cm  = new CryptoModule();
-      if( (argv.length < 2) || (argv.length > 3))
+      if( (argv.length < 2) || (argv.length > 4))
 	throw new Exception("ERROR: illegal number of arguments.");
-      String command = argv[0];
-      String inFileName = argv[1];
+      int argCount = 0;
+      String command = argv[argCount++];
+      if(argv[argCount].equals("-8")){
+	System.out.println("** using 8 bits per charakter.");
+	CONST.bitsPerByte = 8;
+	argCount++;
+      }
+      String inFileName = argv[argCount++];
       String outFileName = "";
-      if(argv.length == 3)
-	outFileName= argv[2];
+      if(argv.length >= argCount)
+	outFileName= argv[argCount];
+
       FileReader in = new FileReader(new File(inFileName));
       StringBuffer inString = new StringBuffer();
       String outString = "*";
@@ -248,7 +260,14 @@ public class Crypter extends java.applet.Applet implements Runnable {
       else if(  command.equals("d") || command.equals("decrypt") ){
 	System.out.print("** Decrypting...");
 	outString = 
-	  b64.bits2string(cm.decrypt(b64.base642bits(inString.toString())));
+	  b64.bits2stringTruncate(cm.decrypt(b64.base642bits(inString.toString())),
+				  true);
+      }
+      else if(  command.equals("u") || command.equals("untruncated-decrypt") ){
+	System.out.print("** Decrypting (without truncation)...");
+	outString = 
+	  b64.bits2stringTruncate(cm.decrypt(b64.base642bits(inString.toString())),
+				  false);
       }
       else throw new Exception("ERROR: Unknown command >>" + command + "<<");
 
@@ -271,10 +290,12 @@ public class Crypter extends java.applet.Applet implements Runnable {
   // -- AUX for command line -----------------------------------------------
   private static void printUsage(){
     System.out.println("Crypter V " + CONST.version + "   <omoeller@verify-it.de>\n");
-    System.out.println("USAGE:   java Crypter COMMAND INFILE [OUTFILE]\n");
-    System.out.println("  COMMAND: one of e (encrypt) or d (decrypt)");
-    System.out.println("  INFILE can contain any sort of data.");
-    System.out.println("  If no OUTFILE is specified, the output goes to stdout.");
+    System.out.println("USAGE:   java Crypter COMMAND [-8] INFILE [OUTFILE]\n");
+    System.out.println("  COMMAND: one of e (encrypt) or d  (decrypt)");
+    System.out.println("               or u (untruncated-decrypt)");
+    System.out.println("  INFILE can contain any sort of 9-bit data.");
+    System.out.println("  If option -8 is set, a char has 8 bits (both for en/decryption).");
+    System.out.println("  If no OUTFILE is specified, the output goes to <stdout>.");
 
     System.exit(0);
   }
@@ -426,47 +447,71 @@ class Base64Handler {
     char2bits[47] = 63;
   }
   public static boolean[] string2bits(String s){
-    boolean[] bits = new boolean[s.length()*8];
+    boolean[] bits = new boolean[s.length()*CONST.bitsPerByte];
     
     int i;
     int count = 0;
     int b;
     for(i = 0; i< s.length(); i++){
       b = (int)s.charAt(i);
-      bits[count++] = (b & 128) != 0;
-      bits[count++] = (b &  64) != 0;
-      bits[count++] = (b &  32) != 0;
-      bits[count++] = (b &  16) != 0;
-      bits[count++] = (b &   8) != 0;
-      bits[count++] = (b &   4) != 0;
-      bits[count++] = (b &   2) != 0;
-      bits[count++] = (b &   1) != 0;}
+
+      if(CONST.bitsPerByte > 8){
+	bits[count++] = ((b & 256) != 0);
+      }
+      bits[count++] = ((b & 128) != 0);
+      bits[count++] = ((b &  64) != 0);
+      bits[count++] = ((b &  32) != 0);
+      bits[count++] = ((b &  16) != 0);
+      bits[count++] = ((b &   8) != 0);
+      bits[count++] = ((b &   4) != 0);
+      bits[count++] = ((b &   2) != 0);
+      bits[count++] = ((b &   1) != 0);}
     
     return bits;
   }
   
+  
+
   public static String bits2string(boolean[] bits){
+    return bits2stringTruncate(bits, false);
+  }
+  
+  public static String bits2stringTruncate(boolean[] bits, boolean truncate){
     int i;
     StringBuffer result = new StringBuffer();
+    String resString;
     int b = 0;
     byte[] dummy = new byte[1];
     int counter = 0;
-    
+
     for(i = 0; i < bits.length; i++){
+
       b = (byte)(2*b);
       if(bits[i])b = (byte)(b|1);
       counter++;
-      if(counter == 8){
+      if(counter == CONST.bitsPerByte){
 	dummy[0] = (byte)b;
 	result.append(new String(dummy));
 	counter = 0;
 	b = 0;}}
     if(counter > 0){// do not ignore leftover bits
-      b = (byte)(b<<(8-counter));
+      b = (byte)(b<<(CONST.bitsPerByte-counter));
 	dummy[0] = (byte)b;
 	result.append(new String(dummy));
     }
-    return result.toString();
+
+
+    resString = result.toString();
+
+    if(truncate){
+      for(i = result.length(); i >= 0; i--){
+	if(resString.regionMatches(true,i,CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
+	  return result.substring(0,i);
+	}
+      }
+    }
+    
+    return resString;
   }
   
   public static boolean[] base64Core2bits(String s){
@@ -477,12 +522,12 @@ class Base64Handler {
     byte b;
     for(i = 0; i< s.length(); i++){
       b = char2bits[(int)s.charAt(i)];
-      bits[count++] = (b &  32) != 0;
-      bits[count++] = (b &  16) != 0;
-      bits[count++] = (b &   8) != 0;
-      bits[count++] = (b &   4) != 0;
-      bits[count++] = (b &   2) != 0;
-      bits[count++] = (b &   1) != 0;}
+      bits[count++] = ((b &  32) != 0);
+      bits[count++] = ((b &  16) != 0);
+      bits[count++] = ((b &   8) != 0);
+      bits[count++] = ((b &   4) != 0);
+      bits[count++] = ((b &   2) != 0);
+      bits[count++] = ((b &   1) != 0);}
     
     return bits;
   }
@@ -497,7 +542,10 @@ class Base64Handler {
     int i;
     int b = 0;
     
-    StringBuffer result = new StringBuffer("begin-base64 CryptoText Input\r\n");
+    StringBuffer result = 
+      new StringBuffer("Crypter Version : " + CONST.version + "\n" +
+		       "Bits per Byte   : " + CONST.bitsPerByte + "\n" +
+		       "begin-base64 CryptoText Input\r\n");
     for(i = 0; i < bits.length; i++){
       b = 2*b;
       if(bits[i])b = (b|1);
@@ -519,9 +567,9 @@ class Base64Handler {
     return result.toString();
   }
   
-  public static String base642string(String bs){
+  public boolean[] base642bits(String bs){
     StringBuffer base64string = new StringBuffer();
-    String errorString = "<No recognized base64 format.>";
+    boolean errorField[] = new boolean[0];
     int i;
     int offset = 0;
     int terminator = 0;
@@ -533,33 +581,31 @@ class Base64Handler {
     offset = bs.indexOf('\n',offset) + 1;
     terminator = bs.indexOf('=',offset);
     
+
     if((offset <= 0) || (terminator == -1))
-      return errorString;
+      return errorField;
     
     for(i=offset; i < terminator; i++){
       c = bs.charAt(i);
       if((c != '\n') && (c != ' ')&&(c != '\t')&&(c != '\r'))
 	base64string.append(c);}
     
-    
-    return bits2string(base64Core2bits(base64string.toString()));
-  }
-  
-  public boolean[] base642bits(String s){
-    return string2bits(base642string(s));
+    return base64Core2bits(base64string.toString());
   }
 }
 
 /**********************************************************************
  * Changelog
  *
- * 1.1 : added terminator Characters 
- * 1.2 : made accessible for javascipt
- * 1.3 : revoked setColumns (older Netscapes cannot handle)
+ * $Log Crypter.java,v$
+ *
+ * 1.5:  updated to verify-it.default
  * 1.4 : added main() method for command-line exectution
  *       shortened default encoding line length
  *       made encoding apt for full 8 bits (binary files)
  *       ignore whitespaces in Base64 parts
- * 1.5:  updated to verify-it.de
+ * 1.3 : revoked setColumns (older Netscapes cannot handle)
+ * 1.2 : made accessible for javascipt
+ * 1.1 : added terminator Characters 
  *
  **********************************************************************/
