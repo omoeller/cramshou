@@ -58,9 +58,9 @@ clean:
 ## [2] Test
 ## ###################################################################
 
-.PHONEY:  test test_ordinary test_binary
+.PHONEY:  test test_ordinary test_binary check
 
-test:	 test_ordinary test_binary 
+test:	 test_ordinary test_binary check
 
 test_ordinary: $(OBJECT_FILES)
 	@if [ ! -d tmp ]; then mkdir tmp; fi ;
@@ -90,6 +90,10 @@ test_binary: $(OBJECT_FILES)
 		exit 7; \
 	fi; \
 
+
+check:
+	cd test ; \
+	make check; 
 
 
 ## ###################################################################

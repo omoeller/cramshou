@@ -1,0 +1,41 @@
+
+export MESSAGE_LENGTH=$1;
+export N_BITS=$2;
+
+if [ -z "$2" ]; then
+   echo "ERROR: need two arguments: MESSAGE_LENGTH, N_BITS_PER_BITE.";
+   exit 1;
+fi;
+
+rm -f message.txt message.enc message.dec;
+if [ $n -ge 8 ]; then
+  head -c ${MESSAGE_LENGTH} /dev/random > message.txt ;
+else
+  # restrict to some ASCII pseudorandom ;	
+  export STRING="abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%^&*()-=[]{}.,";
+  export LIM=${#STRING};
+  export POS=$((`date +"%s"` % ${LIM}));
+  export I=1;
+  while [ $I -lt ${MESSAGE_LENGTH} ]; do
+    echo -n ${STRING:${POS}:1} >> message.txt ;
+    export I=$(($I+1));
+    export POS=$(((7+${POS}*3) % ${LIM}));
+  done ;
+fi;
+
+if ! java Crypter e message.txt message.enc; then
+   echo "ERROR: java Crypter e message.txt message.enc FAILED.";
+   exit 2;
+fi; 
+
+if ! java Crypter d message.enc message.dec; then
+   echo "ERROR: java Crypter d message.enc message.dec FAILED" ;
+   exit 3;
+fi; 
+
+if ! diff message.txt message.dec ; then
+   echo "ERROR: Files differ: message.txt message.dec " ;
+   exit 4;
+fi; 
+
+echo "(${MESSAGE_LENGTH},${N_BITS}): ok.";
