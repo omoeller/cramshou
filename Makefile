@@ -122,6 +122,7 @@ TESTSUITE=./testCrypter.zip
 testsuite:
 	@if [ ! -d $(TESTSUITEDIR) ]; then mkdir $(TESTSUITEDIR) ; fi;
 	rm -rf $(TESTSUITEDIR)/*
+	rm -f $(TESTSUITE) ;
 	cp Makefile_testCrypter $(TESTSUITEDIR)/Makefile;
 	cp test/check_random_message $(TESTSUITEDIR) ;
 	cp Crypter.java $(TESTSUITEDIR) ;
