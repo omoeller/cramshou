@@ -54,7 +54,7 @@ import java.io.OutputStreamWriter;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "2.0." + new String("$Revision: 1.10 $").substring(13).replace('$',' ');
+  final static String  version    = "2.0." + new String("$Revision: 1.11 $").substring(13).replace('$',' ');
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
@@ -70,7 +70,7 @@ class CONST {
  * 
  * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:49:25%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  $Revision: 1.10 $            $Date: 2004/07/07 06:52:54 $
+ * @version  $Revision: 1.11 $            $Date: 2004/07/07 17:47:38 $
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -609,7 +609,7 @@ class Base64Handler {
 	if(resString.regionMatches(true, i,CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
 	  if(CONST.verbose)
 	    System.err.println(" !  Truncate");	
-	  resString = result.substring(0,i);
+	  resString = (result.toString()).substring(0,i );
 	  i = -1;
 	}
       }
@@ -705,6 +705,9 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.11  2004/07/07 17:47:38  oli
+ * fixed: replaced unsupported method 'substring(,)' for StringBuffer
+ *
  * Revision 1.10  2004/07/07 06:52:54  oli
  * removed Java 1.4 dependency again
  *
