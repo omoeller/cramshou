@@ -46,8 +46,6 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
-import java.nio.charset.Charset;
-
 
 // ==== Here is the Cryptographic Algorithm:
 // import CryptoModule;   
@@ -58,7 +56,7 @@ import java.nio.charset.Charset;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "2.0." + new String("$Revision: 1.8 $").substring(13).replace('$',' ');
+  final static String  version    = "2.0." + new String("$Revision: 1.9 $").substring(13).replace('$',' ');
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
@@ -709,6 +707,9 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.9  2004/07/07 06:16:28  oli
+ * removed surplus Charset dependency
+ *
  * Revision 1.8  2004/07/06 23:17:17  oli
  * changed: use java.nio (Java 1.4.2 or higher) to ensure
  * 	 proper clear text file encoding
