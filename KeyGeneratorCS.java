@@ -5,7 +5,7 @@
 // Synopsis:
 //  Crypter, a realizatin with the Cramer Shoup Cryptosystem  
 // /////////////////////////////////////////////////////////////
-// @TABLE OF CONTENTS:		       [TOCD: 19:02 11 Jul 2002]
+// @TABLE OF CONTENTS:                 [TOCD: 19:02 11 Jul 2002]
 //
 //  [1] Cryptographic Functions
 //      [1.1] Create New prime p
@@ -16,11 +16,11 @@
 // @FORMAT:  java
 // @AUTHOR:  M. Oliver M'o'ller     <omoeller@verify-it.de>
 // @BEGUN:   Thu Jul 11 10:59:06 2002
-// @VERSION: $Revision: 1.4 $ 		$Date: 2004/07/12 20:51:50 $
+// @VERSION: $Revision: 1.5 $           $Date: 2004/07/14 21:12:51 $
 // /////////////////////////////////////////////////////////////
-// $Id: KeyGeneratorCS.java,v 1.4 2004/07/12 20:51:50 oli Exp $
+// $Id: KeyGeneratorCS.java,v 1.5 2004/07/14 21:12:51 oli Exp $
 // /////////////////////////////////////////////////////////////
-// @SPELL:   british 			Wed Jul  7 07:43:06 2004
+// @SPELL:   british                    Wed Jul  7 07:43:06 2004
 
 import java.lang.*;
 
@@ -57,12 +57,12 @@ public class KeyGeneratorCS  {
   /**
    * Name of this version (should be global for project)
    */
-  public static final String VERSION_NAME = "1.1 $Revision: 1.4 $";
+  public static final String VERSION_NAME = "1.1 $Revision: 1.5 $";
 
   /**
    * Date of last changes
    */
-  public static final String VERSION_DATE = "$Date: 2004/07/12 20:51:50 $";
+  public static final String VERSION_DATE = "$Date: 2004/07/14 21:12:51 $";
 
   /**
    * String describing the version of this API
@@ -189,55 +189,55 @@ public class KeyGeneratorCS  {
 
     while(i< argv.length){
       if(argv[i].charAt(0) == '-'){
-	if(1 == (argv[i]).length() )
-	  abort();
+        if(1 == (argv[i]).length() )
+          abort();
 
-	switch (argv[i].charAt(1))  {
+        switch (argv[i].charAt(1))  {
 
-	case 'f' : 
-	  if(++i == argv.length)
-	    abort();
-	  filename = argv[i];
-	  break;
+        case 'f' : 
+          if(++i == argv.length)
+            abort();
+          filename = argv[i];
+          break;
 
-	case 'n' : 
-	  if(++i == argv.length)
-	    abort();
-	  keyname = argv[i];
-	  break;
+        case 'n' : 
+          if(++i == argv.length)
+            abort();
+          keyname = argv[i];
+          break;
 
-	case 'o' : 
-	  if(++i == argv.length)
-	    abort();
-	  owner = argv[i];
-	  break;
+        case 'o' : 
+          if(++i == argv.length)
+            abort();
+          owner = argv[i];
+          break;
 
- 	case 'c' : 
-	  if(++i == argv.length)
-	    abort();
-	  certainty = (new Integer(argv[i])).intValue();
-	  if(certainty <1) 
-	    abort();
-	  break;
+        case 'c' : 
+          if(++i == argv.length)
+            abort();
+          certainty = (new Integer(argv[i])).intValue();
+          if(certainty <1) 
+            abort();
+          break;
 
-	case 'h' : 
-	  printUsage();
-	  printDescription();
-	  System.exit(0);
-	  break;
+        case 'h' : 
+          printUsage();
+          printDescription();
+          System.exit(0);
+          break;
 
-	default : 
-	  System.out.println("ERROR: unexpected option    " + argv[i]);
-	  abort();
+        default : 
+          System.out.println("ERROR: unexpected option    " + argv[i]);
+          abort();
 
-	}
+        }
       }
       else {
-	// setting random bits
-	if(bits < 0)
-	  bits = (new Integer(argv[i])).intValue();
-	else
-	  abort();
+        // setting random bits
+        if(bits < 0)
+          bits = (new Integer(argv[i])).intValue();
+        else
+          abort();
       }
       i++;
     }
@@ -266,10 +266,10 @@ public class KeyGeneratorCS  {
     if( null != filename){
       File f = new File(filename);    
       if(new File(filename).exists()){
-	System.out.println("++ Error: file \"" +
-		       filename +
-		       "\"exists.");
-	System.exit(0);		
+        System.out.println("++ Error: file \"" +
+                       filename +
+                       "\"exists.");
+        System.exit(0);         
       }
       sw = new FileWriter(f);
     }
@@ -295,7 +295,7 @@ public class KeyGeneratorCS  {
     System.out.println("   -n NAME       name of the generated key [default: " + keyname + "]");
     System.out.println("   -o OWNER      name+email of owner [default: " + owner +"]");
     System.out.println("   -c CERTAINTY  risk of guessing a bad prime is (1/2)^c  [default: " + certainty +"]");
-										    System.out.println("   -h            display help");
+                                                                                    System.out.println("   -h            display help");
 
   }
 
@@ -426,17 +426,17 @@ public class KeyGeneratorCS  {
       BigInteger primeQ = new BigInteger(bits, certainty, rnd);
 
       while(
-	    (primeQ.mod(const3)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const5)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const7)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const9)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const11)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const13)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const17)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const19)).equals(BigInteger.ZERO) ||
-	    (primeQ.mod(const23)).equals(BigInteger.ZERO) 
-	    ){
-	primeQ = new BigInteger(bits, certainty, rnd);
+            (primeQ.mod(const3)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const5)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const7)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const9)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const11)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const13)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const17)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const19)).equals(BigInteger.ZERO) ||
+            (primeQ.mod(const23)).equals(BigInteger.ZERO) 
+            ){
+        primeQ = new BigInteger(bits, certainty, rnd);
       }
       System.out.println("Start with: " + primeQ.toString());
 
@@ -451,19 +451,19 @@ public class KeyGeneratorCS  {
       int i;
 
       for(i=2; i < 2310; i++){
-	bigI = (new BigInteger((new Integer(i)).toString()));
-	shift = (numberP.multiply(bigI));
-	if( 
-	   ((shift.mod(const3)).equals(BigInteger.ONE)) ||
-	   ((shift.mod(const5)).equals(const2)) ||
-	   ((shift.mod(const7)).equals(const3)) ||
-	   ((shift.mod(const11)).equals(const5))
-	   ){
-	  // skip
-	}
-	else {
-	  shiftCandidates.addElement(((primeQ.multiply(bigI)).multiply(const2)).subtract((BigInteger)(shiftCandidates.elementAt(shiftCandidates.size() - 1))));
-	}
+        bigI = (new BigInteger((new Integer(i)).toString()));
+        shift = (numberP.multiply(bigI));
+        if( 
+           ((shift.mod(const3)).equals(BigInteger.ONE)) ||
+           ((shift.mod(const5)).equals(const2)) ||
+           ((shift.mod(const7)).equals(const3)) ||
+           ((shift.mod(const11)).equals(const5))
+           ){
+          // skip
+        }
+        else {
+          shiftCandidates.addElement(((primeQ.multiply(bigI)).multiply(const2)).subtract((BigInteger)(shiftCandidates.elementAt(shiftCandidates.size() - 1))));
+        }
       }
       
       System.out.println("Actual 2310 grid size: " + shiftCandidates.size());
@@ -473,23 +473,23 @@ public class KeyGeneratorCS  {
       boolean notfound = true;
       
       while(notfound){
-	System.out.print("=");
+        System.out.print("=");
 
-	numberP = ((longJ.multiply(primeQ)).multiply(const2)).add(BigInteger.ONE);
-	longJ = longJ.add(const2310);
+        numberP = ((longJ.multiply(primeQ)).multiply(const2)).add(BigInteger.ONE);
+        longJ = longJ.add(const2310);
 
-	i = 1;
-	
-	while(i < shiftCandidates.size()){
-	  if(numberP.isProbablePrime(certainty)){
-	    notfound = false;
-	    i = shiftCandidates.size(); 
-	  }
-	  else {
-	    numberP = numberP.add((BigInteger)shiftCandidates.elementAt(i++));
-	    System.out.print("+");
-	  }
-	}
+        i = 1;
+        
+        while(i < shiftCandidates.size()){
+          if(numberP.isProbablePrime(certainty)){
+            notfound = false;
+            i = shiftCandidates.size(); 
+          }
+          else {
+            numberP = numberP.add((BigInteger)shiftCandidates.elementAt(i++));
+            System.out.print("+");
+          }
+        }
       }
       
       System.out.println("");
@@ -515,18 +515,18 @@ public class KeyGeneratorCS  {
       BigInteger pp = nextSmallestPrime();
       
       while(!bigN.equals(BigInteger.ONE)){
-	if((bigN.mod(pp)).equals(BigInteger.ZERO)){
-	  int j = 1;
-	  bigN = bigN.divide(pp);
-	  while( (bigN.mod(pp)).equals(BigInteger.ZERO) ){
-	    bigN = bigN.divide(pp);
-	    j++;
-	  }
-	    pMinus1Factors.addElement(pp);
-	    pMinus1FactorMultiplicity.addElement((new Integer(j)));
-	    System.out.print("/");
-	}
-	pp = nextSmallestPrime();
+        if((bigN.mod(pp)).equals(BigInteger.ZERO)){
+          int j = 1;
+          bigN = bigN.divide(pp);
+          while( (bigN.mod(pp)).equals(BigInteger.ZERO) ){
+            bigN = bigN.divide(pp);
+            j++;
+          }
+            pMinus1Factors.addElement(pp);
+            pMinus1FactorMultiplicity.addElement((new Integer(j)));
+            System.out.print("/");
+        }
+        pp = nextSmallestPrime();
       }
       System.out.println();
 
@@ -534,8 +534,8 @@ public class KeyGeneratorCS  {
       pMinus1factorizationExponents = new int[pMinus1Factors.size()];
 
       for(i = 0; i < pMinus1Factors.size(); i++){
-	pMinus1factorization[i] = (BigInteger)pMinus1Factors.elementAt(i);
-	pMinus1factorizationExponents[i] = ((Integer)pMinus1FactorMultiplicity.elementAt(i)).intValue();
+        pMinus1factorization[i] = (BigInteger)pMinus1Factors.elementAt(i);
+        pMinus1factorizationExponents[i] = ((Integer)pMinus1FactorMultiplicity.elementAt(i)).intValue();
       }
 
     }
@@ -581,14 +581,14 @@ public class KeyGeneratorCS  {
     for(int i = 0; i < pMinus1factorization.length; i++){
       System.out.print("*");
       for(j = 1; j < pMinus1factorizationExponents[i]; j++){
-	if(x.modPow((ord.divide(pMinus1factorization[i])),primeP).equals(BigInteger.ONE)
-	   ){
-	  System.out.print("@");
-	  ord = ord.divide(pMinus1factorization[i]);
-	}
+        if(x.modPow((ord.divide(pMinus1factorization[i])),primeP).equals(BigInteger.ONE)
+           ){
+          System.out.print("@");
+          ord = ord.divide(pMinus1factorization[i]);
+        }
       }
       if(x.modPow(ord.divide(pMinus1factorization[i]),primeP).equals(BigInteger.ONE)){
-	ord = ord.divide(pMinus1factorization[i]);
+        ord = ord.divide(pMinus1factorization[i]);
       }
     }
     return ord;
@@ -615,29 +615,29 @@ public class KeyGeneratorCS  {
       
       System.out.print("--ok--");
       while(-1 == ord.compareTo(primeP.subtract(BigInteger.ONE))){
-	y = ((new BigInteger(nbits, new Random())).mod(p3)).add(const2); 
-	ordy = ordInG(y);
-	c = ordy.gcd(ord);
-	s = ord.mod(ordy.divide(c));
-	
-	if(ordy.equals(p1)){
-	  prim = y;
-	  ord = ordy; 
-	}
-	else {
-	
-	  if ( (-1 == c.compareTo(ordy)) &&
-	       (-1 == (BigInteger.ZERO).compareTo(s))
-	     ){
-	    ss = ordy.mod(ord.divide(c));
-	    ss = ss.divide(ss.gcd(s));
-	    prim = prim.modPow(ord.divide(s), 
-			       primeP);
-	    prim = (prim.multiply(y.modPow(ordy.divide(ss),
-					   primeP))
-		    ).mod(primeP);
-	  }
-	}
+        y = ((new BigInteger(nbits, new Random())).mod(p3)).add(const2); 
+        ordy = ordInG(y);
+        c = ordy.gcd(ord);
+        s = ord.mod(ordy.divide(c));
+        
+        if(ordy.equals(p1)){
+          prim = y;
+          ord = ordy; 
+        }
+        else {
+        
+          if ( (-1 == c.compareTo(ordy)) &&
+               (-1 == (BigInteger.ZERO).compareTo(s))
+             ){
+            ss = ordy.mod(ord.divide(c));
+            ss = ss.divide(ss.gcd(s));
+            prim = prim.modPow(ord.divide(s), 
+                               primeP);
+            prim = (prim.multiply(y.modPow(ordy.divide(ss),
+                                           primeP))
+                    ).mod(primeP);
+          }
+        }
       }
       return prim;
     }
@@ -675,19 +675,19 @@ public class KeyGeneratorCS  {
       BigInteger newPrime = ((BigInteger)primes.lastElement()).add(const2);
       int i = 1;
       while(-1 == ((((BigInteger)primes.elementAt(i-1)).multiply((BigInteger)primes.elementAt(i-1))).compareTo(newPrime))){
-	if(newPrime.mod((BigInteger)primes.elementAt(i)).equals(BigInteger.ZERO)){
-	  newPrime = newPrime.add(const2);
-	  System.out.print("#");
-	  i = 1;
-	}
-	else {
-	  i++;
-	}
+        if(newPrime.mod((BigInteger)primes.elementAt(i)).equals(BigInteger.ZERO)){
+          newPrime = newPrime.add(const2);
+          System.out.print("#");
+          i = 1;
+        }
+        else {
+          i++;
+        }
       }
       
       System.out.print(newPrime.toString());
       primes.addElement(newPrime);
-	    
+            
       return newPrime;
     }
   }
@@ -708,7 +708,7 @@ public class KeyGeneratorCS  {
       System.out.print(pMinus1factorization[i].toString());
       System.out.print("^" + pMinus1factorizationExponents[i]);
       if(i+1 <  pMinus1factorization.length)
-	System.out.print(" * ");
+        System.out.print(" * ");
       System.out.println();
     }
   }
@@ -733,18 +733,18 @@ public class KeyGeneratorCS  {
     byte b;
     do {
       if(sb.length() > 0)
-	sb.insert(0, ", ");
+        sb.insert(0, ", ");
       b = (byte)((n.mod(const256)).intValue());
       n = n.divide(const256);
       if(n.equals(BigInteger.ZERO)){
-	if (b < 0)
-	  sb.insert(0, "0, " + b);
-	  else
-	    sb.insert(0, b );
-	break;
+        if (b < 0)
+          sb.insert(0, "0, " + b);
+          else
+            sb.insert(0, b );
+        break;
       }
       else {
-	sb.insert(0, b );
+        sb.insert(0, b );
       }
     } while(true);
 
@@ -904,24 +904,24 @@ public class KeyGeneratorCS  {
     os.write("   ************************************************************/\n");
     os.write("  \n");
     os.write("  private BigInteger hashOnOneNumber(BigInteger p,\n");
-    os.write("				     BigInteger hg1,\n");
-    os.write("				     BigInteger hg2,\n");
-    os.write("				     BigInteger nn){\n");
+    os.write("                               BigInteger hg1,\n");
+    os.write("                               BigInteger hg2,\n");
+    os.write("                               BigInteger nn){\n");
     os.write("    BigInteger q = p.shiftRight(1); // -1 div 2\n");
     os.write("    return hashOnTwoNumbers(p,hg1,hg2,nn.divide(q),nn.mod(q));\n");
     os.write("  }\n");
     os.write("  private BigInteger hashOnTwoNumbers(BigInteger p,\n");
-    os.write("				      BigInteger hg1,\n");
-    os.write("				      BigInteger hg2,\n");
-    os.write("				      BigInteger a1,\n");
-    os.write("				      BigInteger a2){\n");
+    os.write("                                BigInteger hg1,\n");
+    os.write("                                BigInteger hg2,\n");
+    os.write("                                BigInteger a1,\n");
+    os.write("                                BigInteger a2){\n");
     os.write("    return ((hg1.modPow(a1,p)).multiply(hg2.modPow(a2,p))).mod(p);\n");
     os.write("  }\n");
     os.write("  \n");
     os.write("  private BigInteger hashBitList(int k,\n");
-    os.write("				 BigInteger p,\n");
-    os.write("				 HashFunction hash,\n");
-    os.write("				 boolean[] bits){\n");
+    os.write("                           BigInteger p,\n");
+    os.write("                           HashFunction hash,\n");
+    os.write("                           boolean[] bits){\n");
     os.write("    BigInteger hg1 = hash.hash_g1;\n");
     os.write("    BigInteger hg2 = hash.hash_g2;\n");
     os.write("    \n");
@@ -939,11 +939,11 @@ public class KeyGeneratorCS  {
     os.write("    while(index < bits.length){\n");
     os.write("      // copy bits\n");
     os.write("      for(i = 0; i < len; i++){\n");
-    os.write("	if(index < 0)\n");
-    os.write("	  transferList[i] = false;\n");
-    os.write("	else\n");
-    os.write("	  transferList[i] = bits[index];\n");
-    os.write("	index++;}\n");
+    os.write("  if(index < 0)\n");
+    os.write("    transferList[i] = false;\n");
+    os.write("  else\n");
+    os.write("    transferList[i] = bits[index];\n");
+    os.write("  index++;}\n");
     os.write("      \n");
     os.write("      arg = bits2BigInteger(transferList).add((res.shiftLeft(1)).setBit(0).shiftLeft(len));\n");
     os.write("      res = hashOnOneNumber(p, hg1, hg2, arg);\n");
@@ -974,7 +974,7 @@ public class KeyGeneratorCS  {
     os.write("  };\n");
     os.write("  \n");
     os.write("  private boolean[] bitListOne(int k,\n");
-    os.write("			       BigInteger b1){\n");
+    os.write("                         BigInteger b1){\n");
     os.write("    // LEAST significant bits first...\n");
     os.write("    boolean[] res = new boolean[k];\n");
     os.write("    int i;\n");
@@ -986,9 +986,9 @@ public class KeyGeneratorCS  {
     os.write("  }\n");
     os.write("  \n");
     os.write("  private boolean[] bitListThree(int k,\n");
-    os.write("				 BigInteger b1,\n");
-    os.write("				 BigInteger b2,\n");
-    os.write("				 BigInteger b3){\n");
+    os.write("                           BigInteger b1,\n");
+    os.write("                           BigInteger b2,\n");
+    os.write("                           BigInteger b3){\n");
     os.write("    // LEAST significant bits first...\n");
     os.write("    boolean[] res = new boolean[3*k];\n");
     os.write("    int i;\n");
@@ -1004,131 +1004,138 @@ public class KeyGeneratorCS  {
     os.write("    return res;\n");
     os.write("  }\n");
     os.write("  private boolean[] bitListFour(int k,\n");
-    os.write("				  BigInteger b1,\n");
-    os.write("				  BigInteger b2,\n");
-    os.write("				  BigInteger b3,\n");
-    os.write("				  BigInteger b4){\n");
-    os.write("	// least significant bits first...\n");
-    os.write("	boolean[] res = new boolean[4*k];\n");
-    os.write("	int i;\n");
-    os.write("	int index = 0;\n");
+    os.write("                            BigInteger b1,\n");
+    os.write("                            BigInteger b2,\n");
+    os.write("                            BigInteger b3,\n");
+    os.write("                            BigInteger b4){\n");
+    os.write("  // least significant bits first...\n");
+    os.write("  boolean[] res = new boolean[4*k];\n");
+    os.write("  int i;\n");
+    os.write("  int index = 0;\n");
     os.write("\n");
-    os.write("	for(i = 0 ; i < k; i++)\n");
-    os.write("	    res[index++] = b1.testBit(i);\n");
-    os.write("	for(i = 0 ; i < k; i++)\n");
-    os.write("	    res[index++] = b2.testBit(i);\n");
-    os.write("	for(i = 0 ; i < k; i++)\n");
-    os.write("	    res[index++] = b3.testBit(i);\n");
-    os.write("	for(i = 0 ; i < k; i++)\n");
-    os.write("	    res[index++] = b4.testBit(i);\n");
+    os.write("  for(i = 0 ; i < k; i++)\n");
+    os.write("      res[index++] = b1.testBit(i);\n");
+    os.write("  for(i = 0 ; i < k; i++)\n");
+    os.write("      res[index++] = b2.testBit(i);\n");
+    os.write("  for(i = 0 ; i < k; i++)\n");
+    os.write("      res[index++] = b3.testBit(i);\n");
+    os.write("  for(i = 0 ; i < k; i++)\n");
+    os.write("      res[index++] = b4.testBit(i);\n");
     os.write("\n");
-    os.write("	return res;\n");
+    os.write("  return res;\n");
     os.write("    }\n");
     os.write("\n");
     os.write("    /************************************************************\n");
     os.write("     * --  Encrypting  --\n");
     os.write("     ************************************************************/\n");
     os.write("    \n");
-    os.write("	public boolean[] encrypt(boolean[] message){\n");
-    os.write("	/***\n");
-    os.write("	 * Returns a (big) array representing the\n");
-    os.write("	 * concatenation of encryption blocks\n");
-    os.write("	 *        [u1 u2 e v]\n");
-    os.write("	 * Since the (bit-)length of each component of the block is given\n");
-    os.write("	 * with k, it is not necessary to encapsulate those additionally.\n");
-    os.write("	 **************************************************/\n");
-    os.write("	    \n");
-    os.write("	    int messageLength = message.length;\n");
-    os.write("	    int el            = pk.k - 1; // one 'bit' is not complete \n");
-    os.write("	    int i;\n");
-    os.write("	    int toEncrypt     = (1+ (message.length / el))*pk.k*4;\n");
-    os.write("	    boolean[] mChunk  = new boolean[pk.k];\n");
-    os.write("	    mChunk[pk.k-1] = false;      // ignore most significant bit\n");
-    os.write("	    boolean[] cChunk  = new boolean[pk.k*4];\n");
-    os.write("	    boolean[] res     = new boolean[toEncrypt];\n");
-    os.write("	    int resIndex      = 0;\n");
-    os.write("	    \n");
-    os.write("	    BigInteger r,u1,u2,e,m,alpha,v;\n");
+    os.write("  public boolean[] encrypt(boolean[] message){\n");
+    os.write("  /***\n");
+    os.write("   * Returns a (big) array representing the\n");
+    os.write("   * concatenation of encryption blocks\n");
+    os.write("   *        [u1 u2 e v]\n");
+    os.write("   * Since the (bit-)length of each component of the block is given\n");
+    os.write("   * with k, it is not necessary to encapsulate those additionally.\n");
+    os.write("   **************************************************/\n");
+    os.write("      \n");
+    os.write("      int messageLength = message.length;\n");
+    os.write("      int el            = pk.k - 1; // one 'bit' is not complete \n");
+    os.write("      int i;\n");
+    os.write("      int toEncrypt     = (1+ (message.length / el))*pk.k*4;\n");
+    os.write("      boolean[] mChunk  = new boolean[pk.k];\n");
+    os.write("      mChunk[pk.k-1] = false;      // ignore most significant bit\n");
+    os.write("      boolean[] cChunk  = new boolean[pk.k*4];\n");
+    os.write("      boolean[] res     = new boolean[toEncrypt];\n");
+    os.write("      int resIndex      = 0;\n");
+    os.write("      \n");
+    os.write("      BigInteger r,u1,u2,e,m,alpha,v;\n");
     os.write("\n");
-    os.write("	    int pointer = 0;\n");
-    os.write("	    int index = 0;\n");
+    os.write("      int pointer = 0;\n");
+    os.write("      int index = 0;\n");
     os.write("\n");
     os.write("\n");
-    os.write("	    while(pointer < messageLength){\n");
-    os.write("		index = 0;\n");
-    os.write("		while((index < el)&&(pointer < messageLength))\n");
-    os.write("		    mChunk[index++] = message[pointer++];\n");
-    os.write("		while(index < el) // fill with random bits\n");
-    os.write("		    mChunk[index++] = ( (rnd.nextInt() & 1) == 1);\n");
-    os.write("		m  = bits2BigInteger(mChunk);\n");
+    os.write("      while(pointer < messageLength){\n");
+    os.write("          index = 0;\n");
+    os.write("          while((index < el)&&(pointer < messageLength))\n");
+    os.write("              mChunk[index++] = message[pointer++];\n");
+    os.write("          while(index < el) // fill with random bits\n");
+    os.write("              mChunk[index++] = ( (rnd.nextInt() & 1) == 1);\n");
+    os.write("          m  = bits2BigInteger(mChunk);\n");
+    os.write("          if(m.equals(BigInteger.ZERO)){ // avoid to encrypt a '0'.\n");
+    os.write("              mChunk[el] = true;         // instead fill throwaway-bit\n");
+    os.write("              m = bits2BigInteger(mChunk);\n");
+    os.write("          }\n");
     os.write("\n");
-    os.write("		r = bigRandom(pk.k+1).mod(pk.p);\n");
-    os.write("		u1 = pk.g1.modPow(r,pk.p);\n");
-    os.write("		u2 = pk.g2.modPow(r,pk.p);\n");
-    os.write("		e  = ((pk.h.modPow(r,pk.p)).multiply(m)).mod(pk.p);\n");
-    os.write("		alpha = hashBitList(pk.k,pk.p,pk.hash,bitListThree(pk.k,u1,u2,e));\n");
-    os.write("		v = ((pk.c.modPow(r,pk.p)).multiply(pk.d.modPow(r.multiply(alpha),pk.p))).mod(pk.p);\n");
-    os.write("		cChunk = bitListFour(pk.k,u1,u2,e,v);\n");
-    os.write("		\n");
-    os.write("		for(i=0; i < 4*pk.k; i++)\n");
-    os.write("		    res[resIndex++] = cChunk[i];\n");
-    os.write("	    }\n");
-    os.write("	    return res;\n");
+    os.write("          r = bigRandom(pk.k+1).mod(pk.p);\n");
+    os.write("          u1 = pk.g1.modPow(r,pk.p);\n");
+    os.write("          u2 = pk.g2.modPow(r,pk.p);\n");
+    os.write("          e  = ((pk.h.modPow(r,pk.p)).multiply(m)).mod(pk.p);\n");
+    os.write("          alpha = hashBitList(pk.k,pk.p,pk.hash,bitListThree(pk.k,u1,u2,e));\n");
+    os.write("          v = ((pk.c.modPow(r,pk.p)).multiply(pk.d.modPow(r.multiply(alpha),pk.p))).mod(pk.p);\n");
+    os.write("          cChunk = bitListFour(pk.k,u1,u2,e,v);\n");
+    os.write("          \n");
+    os.write("          for(i=0; i < 4*pk.k; i++)\n");
+    os.write("              res[resIndex++] = cChunk[i];\n");
+    os.write("      }\n");
+    os.write("      return res;\n");
     os.write("\n");
-    os.write("	}\n");
+    os.write("  }\n");
     os.write("    \n");
     os.write("    /************************************************************\n");
     os.write("     * --  Decrypting  --\n");
     os.write("     ************************************************************/\n");
     os.write("\n");
     os.write("    public boolean[] decrypt(boolean[] cryptoText){\n");
-    os.write("	boolean[] res = new boolean[((cryptoText.length / (4 * sk.k))+1)*(sk.k-1)];\n");
-    os.write("	// one bit (the most significant one ) is always lost, since it is 0.\n");
-    os.write("	\n");
-    os.write("	boolean[] cChunk = new boolean[sk.k];\n");
-    os.write("	boolean[] mChunk = new boolean[sk.k];\n");
-    os.write("	BigInteger c;\n");
-    os.write("	int index = 0;\n");
-    os.write("	int resIndex = 0;\n");
-    os.write("	int len   = cryptoText.length;\n");
-    os.write("	int i;\n");
+    os.write("  boolean[] res = new boolean[((cryptoText.length / (4 * sk.k))+1)*(sk.k-1)];\n");
+    os.write("  // one bit (the most significant one ) is always lost, since it is 0.\n");
+    os.write("  \n");
+    os.write("  boolean[] cChunk = new boolean[sk.k];\n");
+    os.write("  boolean[] mChunk = new boolean[sk.k];\n");
+    os.write("  BigInteger c;\n");
+    os.write("  int index = 0;\n");
+    os.write("  int resIndex = 0;\n");
+    os.write("  int len   = cryptoText.length;\n");
+    os.write("  int i;\n");
     os.write("\n");
-    os.write("	byte[] zero = {0};\n");
-    os.write("	BigInteger zeroBig = new BigInteger(zero); // will be returned, if key is faulty\n");
-    os.write("	BigInteger u1,u2,e,v,alpha,m;\n");
+    os.write("  byte[] zero = {0};\n");
+    os.write("  BigInteger zeroBig = new BigInteger(zero); // will be returned, if key is faulty\n");
+    os.write("  BigInteger u1,u2,e,v,alpha,m;\n");
     os.write("\n");
-    os.write("	while(index+(4*sk.k) < len){ // only decrypt complete blocks\n");
-    os.write("	    // Copy --- with all bits.\n");
-    os.write("	    for(i = 0; i< sk.k; i++)\n");
-    os.write("		cChunk[i] = cryptoText[index++];\n");
-    os.write("	    u1 = bits2BigInteger(cChunk);\n");
-    os.write("	    for(i = 0; i< sk.k; i++)\n");
-    os.write("		cChunk[i] = cryptoText[index++];\n");
-    os.write("	    u2 = bits2BigInteger(cChunk);\n");
-    os.write("	    for(i = 0; i< sk.k; i++)\n");
-    os.write("		cChunk[i] = cryptoText[index++];\n");
-    os.write("	    e  = bits2BigInteger(cChunk);\n");
-    os.write("	    for(i = 0; i< sk.k; i++)\n");
-    os.write("		cChunk[i] = cryptoText[index++];\n");
-    os.write("	    v = bits2BigInteger(cChunk);\n");
-    os.write("	    \n");
-    os.write("	    alpha = hashBitList(sk.k,sk.p,sk.hash,bitListThree(sk.k,u1,u2,e));\n");
-    os.write("	    \n");
-    //    os.write("	    if(u1.equals(BigInteger.ZERO)){ System.out.println(\"WARNING: u1 is zero!!!!\"); }\n");
+    os.write("  while(index+(4*sk.k) <= len){ // only decrypt complete blocks\n");
+    os.write("      // Copy --- with all bits.\n");
+    os.write("      for(i = 0; i< sk.k; i++)\n");
+    os.write("          cChunk[i] = cryptoText[index++];\n");
+    os.write("      u1 = bits2BigInteger(cChunk);\n");
+    os.write("      for(i = 0; i< sk.k; i++)\n");
+    os.write("          cChunk[i] = cryptoText[index++];\n");
+    os.write("      u2 = bits2BigInteger(cChunk);\n");
+    os.write("      for(i = 0; i< sk.k; i++)\n");
+    os.write("          cChunk[i] = cryptoText[index++];\n");
+    os.write("      e  = bits2BigInteger(cChunk);\n");
+    os.write("      for(i = 0; i< sk.k; i++)\n");
+    os.write("          cChunk[i] = cryptoText[index++];\n");
+    os.write("      v = bits2BigInteger(cChunk);\n");
+    os.write("      \n");
+    os.write("      alpha = hashBitList(sk.k,sk.p,sk.hash,bitListThree(sk.k,u1,u2,e));\n");
+    os.write("      \n");
+    //    os.write("        if(u1.equals(BigInteger.ZERO)){ System.out.println(\"WARNING: u1 is zero!!!!\"); }\n");
     
-    os.write("	    if((v.equals(((u1.modPow(sk.x1.add(alpha.multiply(sk.y1)),sk.p)                    ).multiply(u2.modPow(sk.x2.add(alpha.multiply(sk.y2)),sk.p))).mod(sk.p))))\n");
-    os.write("		{\n");
-    os.write("		    m = (e.multiply((u1.modPow(sk.z,sk.p)).modInverse(sk.p))).mod(sk.p);\n");
-    os.write("		    cChunk = bigInteger2bits(sk.k, m);\n");
-    os.write("		    for(i = 0; i < sk.k - 1; i++) // ignore most significant bit\n");
-    os.write("			res[resIndex++] = cChunk[i];\n");
-    os.write("		}\n");
-    os.write("	    else\n");
-    os.write("		for(i = 0; i < sk.k-1;  i++)\n");
-    os.write("		    res[resIndex++] = true; // fill with ones\n");
-    os.write("	}\n");
-    os.write("		\n");
-    os.write("	return res;\n");
+    os.write("      if((v.equals(((u1.modPow(sk.x1.add(alpha.multiply(sk.y1)),sk.p)                    ).multiply(u2.modPow(sk.x2.add(alpha.multiply(sk.y2)),sk.p))).mod(sk.p))))\n");
+    os.write("          {\n");
+    os.write("		    if(u1.equals(BigInteger.ZERO))\n");
+    os.write("                  m = BigInteger.ZERO;\n");
+    os.write("              else\n");
+    os.write("                  m = (e.multiply((u1.modPow(sk.z,sk.p)).modInverse(sk.p))).mod(sk.p);\n");
+    os.write("              cChunk = bigInteger2bits(sk.k, m);\n");
+    os.write("              for(i = 0; i < sk.k - 1; i++) // ignore most significant bit\n");
+    os.write("                  res[resIndex++] = cChunk[i];\n");
+    os.write("          }\n");
+    os.write("      else\n");
+    os.write("          for(i = 0; i < sk.k-1;  i++)\n");
+    os.write("              res[resIndex++] = true; // fill with ones\n");
+    os.write("  }\n");
+    os.write("          \n");
+    os.write("  return res;\n");
     os.write("    }\n");
     os.write("}\n");
     os.write("\n");
@@ -1143,9 +1150,9 @@ public class KeyGeneratorCS  {
     os.write("    BigInteger hash_g2;\n");
     os.write("\n");
     os.write("    HashFunction(byte[] hash_g1_rep,\n");
-    os.write("		byte[] hash_g2_rep){\n");
-    os.write("	hash_g1 = new BigInteger(hash_g1_rep);\n");
-    os.write("	hash_g2 = new BigInteger(hash_g2_rep);\n");
+    os.write("          byte[] hash_g2_rep){\n");
+    os.write("  hash_g1 = new BigInteger(hash_g1_rep);\n");
+    os.write("  hash_g2 = new BigInteger(hash_g2_rep);\n");
     os.write("    }\n");
     os.write("}\n");
     os.write("\n");
@@ -1173,22 +1180,22 @@ public class KeyGeneratorCS  {
     os.write("    HashFunction hash;\n");
     os.write("    \n");
     os.write("    SecretKey(int k_id,\n");
-    os.write("	      byte[] p_rep,\n");
-    os.write("	      byte[] x1_rep,\n");
-    os.write("	      byte[] x2_rep,\n");
-    os.write("	      byte[] y1_rep,\n");
-    os.write("	      byte[] y2_rep,\n");
-    os.write("	      byte[] z_rep,\n");
-    os.write("	      byte[] hash_g1_rep,\n");
-    os.write("	      byte[] hash_g2_rep){\n");
-    os.write("	k = k_id;\n");
-    os.write("	p  = new BigInteger(p_rep);\n");
-    os.write("	x1 = new BigInteger(x1_rep);\n");
-    os.write("	x2 = new BigInteger(x2_rep);\n");
-    os.write("	y1 = new BigInteger(y1_rep);\n");
-    os.write("	y2 = new BigInteger(y2_rep);\n");
-    os.write("	z  = new BigInteger(z_rep);\n");
-    os.write("	hash = new HashFunction(hash_g1_rep,hash_g2_rep);\n");
+    os.write("        byte[] p_rep,\n");
+    os.write("        byte[] x1_rep,\n");
+    os.write("        byte[] x2_rep,\n");
+    os.write("        byte[] y1_rep,\n");
+    os.write("        byte[] y2_rep,\n");
+    os.write("        byte[] z_rep,\n");
+    os.write("        byte[] hash_g1_rep,\n");
+    os.write("        byte[] hash_g2_rep){\n");
+    os.write("  k = k_id;\n");
+    os.write("  p  = new BigInteger(p_rep);\n");
+    os.write("  x1 = new BigInteger(x1_rep);\n");
+    os.write("  x2 = new BigInteger(x2_rep);\n");
+    os.write("  y1 = new BigInteger(y1_rep);\n");
+    os.write("  y2 = new BigInteger(y2_rep);\n");
+    os.write("  z  = new BigInteger(z_rep);\n");
+    os.write("  hash = new HashFunction(hash_g1_rep,hash_g2_rep);\n");
     os.write("    }\n");
     os.write("}\n");
     os.write("\n");
@@ -1203,22 +1210,22 @@ public class KeyGeneratorCS  {
     os.write("    HashFunction hash;\n");
     os.write("\n");
     os.write("    PublicKey(int k_id,\n");
-    os.write("	      byte[] p_rep,\n");
-    os.write("	      byte[] g1_rep,\n");
-    os.write("	      byte[] g2_rep,\n");
-    os.write("	      byte[] c_rep,\n");
-    os.write("	      byte[] d_rep,\n");
-    os.write("	      byte[] h_rep,\n");
-    os.write("	      byte[] hash_g1_rep,\n");
-    os.write("	      byte[] hash_g2_rep){\n");
-    os.write("	k  = k_id;\n");
-    os.write("	p  = new BigInteger(p_rep);\n");
-    os.write("	g1 = new BigInteger(g1_rep);\n");
-    os.write("	g2 = new BigInteger(g2_rep);\n");
-    os.write("	c  = new BigInteger(c_rep);\n");
-    os.write("	d  = new BigInteger(d_rep);\n");
-    os.write("	h  = new BigInteger(h_rep);\n");
-    os.write("	hash = new HashFunction(hash_g1_rep,hash_g2_rep);\n");
+    os.write("        byte[] p_rep,\n");
+    os.write("        byte[] g1_rep,\n");
+    os.write("        byte[] g2_rep,\n");
+    os.write("        byte[] c_rep,\n");
+    os.write("        byte[] d_rep,\n");
+    os.write("        byte[] h_rep,\n");
+    os.write("        byte[] hash_g1_rep,\n");
+    os.write("        byte[] hash_g2_rep){\n");
+    os.write("  k  = k_id;\n");
+    os.write("  p  = new BigInteger(p_rep);\n");
+    os.write("  g1 = new BigInteger(g1_rep);\n");
+    os.write("  g2 = new BigInteger(g2_rep);\n");
+    os.write("  c  = new BigInteger(c_rep);\n");
+    os.write("  d  = new BigInteger(d_rep);\n");
+    os.write("  h  = new BigInteger(h_rep);\n");
+    os.write("  hash = new HashFunction(hash_g1_rep,hash_g2_rep);\n");
     os.write("    }\n");
     os.write("}\n");
     os.write("\n");
