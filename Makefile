@@ -31,6 +31,8 @@
 ## #############################################################
 ## 
 
+TEST_BITS=8
+
 JAVA_FILES=$(wildcard ./*.java)
 
 
@@ -59,25 +61,18 @@ clean:
 .PHONEY:  test
 
 test:	$(OBJECT_FILES)
-	date > ./tmp/test.in ; \
-	java Crypter e ./tmp/test.in ./tmp/test.out ; \
-	java Crypter d ./tmp/test.out ./tmp/test.decrypted ; \
-	if cmp ./tmp/test.in ./tmp/test.decrypted; then \
+	cp binary.in ./tmp/test.in ; \
+	date >> ./tmp/test.in ; \
+	java Crypter e -$(TEST_BITS) ./tmp/test.in ./tmp/test.out ; \
+	java Crypter d -$(TEST_BITS) ./tmp/test.out ./tmp/test.decrypted ; \
+	if cmp -c ./tmp/test.in ./tmp/test.decrypted; then \
 		echo "** Test successful." ; \
 	else \
 		echo "** Test FAILED!" ; \
 		diff ./tmp/test.in ./tmp/test.decrypted ; \
 		exit 7; \
 	fi; \
-	java Crypter e -8 ./tmp/test.in ./tmp/test.out ; \
-	java Crypter d -8 ./tmp/test.out ./tmp/test.decrypted ; \
-	if cmp ./tmp/test.in ./tmp/test.decrypted; then \
-		echo "** Test successful." ; \
-	else \
-		echo "** Test FAILED!" ; \
-		diff ./tmp/test.in ./tmp/test.decrypted ; \
-		exit 8; \
-	fi;
+
 
 ## ###################################################################
 ## [3] Jar
@@ -90,11 +85,6 @@ jar:	$(OBJECT_FILES)
 	jar cvf pack.jar *.java *.class ; \
 	ls -l pack.jar ;
 
-## ###################################################################
-## [4] Millstone
-## ###################################################################
-
-.PHONEY:  millstone
 
 
 

@@ -49,11 +49,12 @@ import CryptoModule;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "1.6";
+  final static String  version    = "1.6.0";
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
-  public static int bitsPerByte = 9;
+  public static boolean verbose = true;
+  public static int bitsPerByte = 8;
 }
 
 /************************************************************
@@ -62,9 +63,9 @@ class CONST {
  * 
  * It will call en/decryption 
  * 
- * @author <A HREF="MAILTO:oliver.moeller@verified.de?subject=Crypter.java%20(1.6%20Tue%20Feb%204%2000:26:54%202003)">M. Oliver M&ouml;ller</A>
+ * @author <A HREF="MAILTO:oliver.moeller@verified.de?subject=Crypter.java%20(1.6%20Thu%20Feb%206%2021:52:19%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  1.6                     Tue Feb  4 01:13:03 2003
+ * @version  1.6                     Thu Feb  6 23:24:05 2003
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -174,7 +175,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
     listener.outputArea.setText("");
     repaint();
     listener.outputArea.setText(cm.keyNameString +
-				b64.bits2base64(cm.encrypt(b64.string2bits(listener.inputArea.getText() + CONST.TERMINATOR))));
+				b64.bits2base64(cm.encrypt(b64.string2bits(listener.inputArea.getText() + CONST.TERMINATOR + "\n" ))));
     listener.messageLabel.setText("--- Encryption finished.");
   }
   
@@ -232,26 +233,17 @@ public class Crypter extends java.applet.Applet implements Runnable {
 	throw new Exception("ERROR: illegal number of arguments.");
       int argCount = 0;
       String command = argv[argCount++];
-      if(argv[argCount].equals("-8")){
-	System.out.println("** using 8 bits per charakter.");
-	CONST.bitsPerByte = 8;
+
+      if((argv[argCount]).startsWith("-")){
+	int nBits = - (new Integer(argv[argCount])).intValue();
+	if( (nBits < 7) || (nBits > 16)){
+	  throw new Exception("ERROR: number of bits set to an illegal value (" + nBits + ").");
+	}
+	System.out.println("** using " + nBits + " bits per charakter.");
+	CONST.bitsPerByte = nBits;
 	argCount++;
       }
-      if(argv[argCount].equals("-16")){
-	System.out.println("** using 16 bits per charakter.");
-	CONST.bitsPerByte = 16;
-	argCount++;
-      }
-      if(argv[argCount].equals("-17")){
-	System.out.println("** using 17 bits per charakter.");
-	CONST.bitsPerByte = 17;
-	argCount++;
-      }
-      if(argv[argCount].equals("-18")){
-	System.out.println("** using 18 bits per charakter.");
-	CONST.bitsPerByte = 18;
-	argCount++;
-      }
+
       String inFileName = argv[argCount++];
       String outFileName = "";
       if(argv.length >= argCount)
@@ -260,15 +252,18 @@ public class Crypter extends java.applet.Applet implements Runnable {
       FileReader in = new FileReader(new File(inFileName));
       StringBuffer inString = new StringBuffer();
       String outString = "*";
-      char[] c = new char[1];
+      char c;
+      char[] cs = new char[1];
       int i = 0;	
       while(in.ready()){
-	in.read(c,0,1);
-	//c[0] = (char)(65535&(int)c[0]);
-	//c[0] = (char)(1023&(int)c[0]);
-	//System.out.println("  " + (++i) + "  " + (int)c[0]);
-	inString.append(c); }
-      //System.out.println("***\n" + inString.toString() +"***");
+	c = (char)in.read();
+	cs[0] = c;
+	//cs[0] = (char)(65535&(int)c);
+	//cs[0] = (char)(255&(int)c);
+	//System.out.print(cs);
+	//System.out.println("  " + (++i) + "  " + (int)cs[0]);
+
+	inString.append(cs); }
       // -- execute ---------------------------------------------
       if(  command.equals("e") || command.equals("encrypt") ){
 	System.out.print("** Encrypting...");
@@ -281,7 +276,7 @@ public class Crypter extends java.applet.Applet implements Runnable {
 
 	outString = 
 	  cm.keyNameString +
-	  b64.bits2base64(cm.encrypt(b64.string2bits(inString.toString() +  CONST.TERMINATOR)));
+	  b64.bits2base64(cm.encrypt(b64.string2bits(inString.toString() +  CONST.TERMINATOR + "\n" )));
       } 
       else if(  command.equals("d") || command.equals("decrypt") ){
 	System.out.print("** Decrypting...");
@@ -316,11 +311,12 @@ public class Crypter extends java.applet.Applet implements Runnable {
   // -- AUX for command line -----------------------------------------------
   private static void printUsage(){
     System.out.println("Crypter V " + CONST.version + "   <omoeller@verify-it.de>\n");
-    System.out.println("USAGE:   java Crypter COMMAND [-8] INFILE [OUTFILE]\n");
+    System.out.println("USAGE:   java Crypter COMMAND [-NAT] INFILE [OUTFILE]\n");
     System.out.println("  COMMAND: one of e (encrypt) or d  (decrypt)");
     System.out.println("               or u (untruncated-decrypt)");
-    System.out.println("  INFILE can contain any sort of 9-bit data.");
-    System.out.println("  If option -8 is set, a char has 8 bits (both for en/decryption).");
+    System.out.println("  INFILE can contain any sort of data.");
+    System.out.println("  If option -NAT is set with 7 <= NAT <= 16,");
+    System.out.println("     a char has NAT bits (both for en/decryption).");
     System.out.println("  If no OUTFILE is specified, the output goes to <stdout>.");
 
     System.exit(0);
@@ -501,7 +497,8 @@ class Base64Handler {
 	bits[count++] = ((b & 512) != 0);
       if(CONST.bitsPerByte > 8)
 	bits[count++] = ((b & 256) != 0);
-      bits[count++] = ((b & 128) != 0);
+      if(CONST.bitsPerByte > 7)
+	bits[count++] = ((b & 128) != 0);
       bits[count++] = ((b &  64) != 0);
       bits[count++] = ((b &  32) != 0);
       bits[count++] = ((b &  16) != 0);
@@ -510,8 +507,10 @@ class Base64Handler {
       bits[count++] = ((b &   2) != 0);
       bits[count++] = ((b &   1) != 0);}
 
-    System.out.println("\n -- Input String length: " + s.length());
-    System.out.println(" -- Input Bits: " + bits.length);
+    if(CONST.verbose){
+      System.err.println("\n -- Input String length: " + s.length());
+      System.err.println(" -- Input Bits: " + bits.length);
+    }
     
     return bits;
   }
@@ -532,7 +531,8 @@ class Base64Handler {
     int j = 0;	
     int counter = 0;
 
-    System.out.println("\n -- Output Bits: " + bits.length);
+    if(CONST.verbose)
+      System.err.println("\n -- Output Bits: " + bits.length);
 
     for(i = 0; i < bits.length; i++){
 
@@ -546,29 +546,31 @@ class Base64Handler {
 	counter = 0;
 	b = 0;}}
     if(counter > 0){// do not ignore leftover bits
-      b = (int)(b<<(CONST.bitsPerByte-counter));
+      b = (int)(((byte)b)<<(CONST.bitsPerByte-counter));
 	chars[j++] = (char)b;
 	//	dummy[0] = (char)b;
 	//	result.append(new String(dummy));
     }
 
     while(j < chars.length)
-	chars[j++] = 0;	
+	chars[j++] = '\n';	
 
     result = new StringBuffer(new String(chars));	
 
     resString = result.toString();
 
     if(truncate){
-      for(i = result.length(); i >= 0; i--){
-	if(resString.regionMatches(true,i,CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
-	  System.out.println("! Truncate");	
+      for(i = result.length()-1; i >= 0; i--){
+	if(resString.regionMatches(true, i,CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
+	  if(CONST.verbose)
+	    System.err.println(" !  Truncate");	
 	  resString = result.substring(0,i);
 	  i = -1;
 	}
       }
     }
-    System.out.println(" -- output String length: " + resString.length());
+    if(CONST.verbose)
+      System.err.println(" -- Output String length: " + resString.length());
     
     return resString;
   }
@@ -602,8 +604,8 @@ class Base64Handler {
     int b = 0;
     
     StringBuffer result = 
-      new StringBuffer("Crypter Version : " + CONST.version + "\n" +
-		       "Bits per Byte   : " + CONST.bitsPerByte + "\n" +
+      new StringBuffer("Crypter Version: " + CONST.version + "\n" +
+		       "Bits per Byte  : " + CONST.bitsPerByte + "\n" +
 		       "begin-base64 CryptoText Input\r\n");
     for(i = 0; i < bits.length; i++){
       b = 2*b;
@@ -621,7 +623,7 @@ class Base64Handler {
       b = b<<(6-counter);     // shift it up front...
       result.append(bits2char[b]);}
     
-    result.append("=\n==--==");
+    result.append("=\n==--==\n");
     
     return result.toString();
   }
@@ -656,7 +658,10 @@ class Base64Handler {
 /**********************************************************************
  * Changelog
  *
- * $Log Crypter.java,v$
+ * $Log: Crypter.java,v $
+ * Revision 1.4  2003/02/06 22:25:41  oli
+ * generalizes n-bits option; changed TERMINATOR string
+ *
  *
  * 1.5:  updated to verify-it.default
  * 1.4 : added main() method for command-line exectution
