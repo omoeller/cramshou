@@ -54,7 +54,7 @@ import java.io.OutputStreamWriter;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "2.0." + new String("$Revision: 1.14 $").substring(13).replace('$',' ');
+  final static String  version    = "2.1." + new String("$Revision: 1.15 $").substring(13).replace('$',' ');
   public static boolean truncateAfterTERMINATOR = true;
   public static boolean ignoreLeftoverBits = true;
   public static boolean verbose = false;
@@ -69,7 +69,7 @@ class CONST {
  * 
  * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:49:25%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  $Revision: 1.14 $            $Date: 2004/11/10 08:18:39 $
+ * @version  $Revision: 1.15 $            $Date: 2004/11/10 08:53:30 $
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -724,6 +724,9 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.15  2004/11/10 08:53:30  oli
+ * advanced number to 2.1
+ *
  * Revision 1.14  2004/11/10 08:18:39  oli
  * fixed typo
  *
