@@ -1,19 +1,23 @@
 
 -----------------------------------------------------------------
+CRYPTER_REL_2_1 : Java 1.4.2. or higher (due to java.nio)
+		  pads with bit pattern 1000 1000 1000 1000
+		  and crypto algorythm/keygen pads with (10|01)*
+		  Cryper.java Rev. 1.15
+		  2004-11-10
+-----------------------------------------------------------------
 
+-----------------------------------------------------------------
 CRYPTER_REL_2_0_8 : Java 1.4.2. or higher (due to java.nio)
 		    uses proper encoding for clear text files
 		    recommended: 8 bits/byte.
 		    2004-06-08
-
 -----------------------------------------------------------------
 
 -----------------------------------------------------------------
-
 CRYPTER_REL_1_6_2_alpha : classic crypter, without java.nio
 			  (compatible with Java 1.1.5)
 			  does not support > 7 bit input characters on
 			  newer platforms
 			  2004-06-07
-
 -----------------------------------------------------------------
