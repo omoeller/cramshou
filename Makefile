@@ -147,10 +147,10 @@ publish:
 	cd toy; make clean all publish; 
 	make testsuite ;
 	cp $(TESTSUITE) $(WWW_TESTSUITEDIR) ;
-	@echo "publish: done." 
-	@echo "NOTES:"; 
-	@echo " + remember to update crypter.html, applet-crypter.html, millstone_crypter.html, applet-millstone_crypter.html" ;\
-	@echo " + remember to update Validate (in Val: call mkval.bash)";
+	echo "publish: done." 
+	echo "NOTES:"; 
+	echo " + remember to update crypter.html, applet-crypter.html, millstone_crypter.html, applet-millstone_crypter.html" ;\
+	echo " + remember to update Validate (in ./Validate: call mkval.bash)";
 
 
 
