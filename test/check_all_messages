@@ -121,16 +121,16 @@ function next_message {
 	done;
 
 	export MESSAGE_COUNT=$(num_inc ${MESSAGE_COUNT});
-	## echo "## ${MESSAGE_COUNT}" 1>&2;
+	echo "## ${MESSAGE_COUNT} / ${MAX_MESSAGE_COUNT}" 1>&2;
 	echo "true";
     else
 	echo "false";
     fi;
 }
 
-export MAX_MESSAGE_COUNT="$(num_expt_2 ${MESSAGE_LENGTH})";
+export MAX_MESSAGE_COUNT="$(num_expt_2 $(num_times 8 ${MESSAGE_LENGTH}))";
 echo "## message length ${MESSAGE_LENGTH}";
-echo "## testing all messages from 0 - ${MAX_MESSAGE_COUNT}";
+echo "## testing all messages from 0 - $((${MAX_MESSAGE_COUNT}-1))";
 
 
 while next_message; do

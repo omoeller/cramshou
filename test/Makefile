@@ -133,8 +133,8 @@ exhaustive:
 	    done; \
 	    javac -classpath . Crypter.java; \
 		for n in $(EXHAUSTIVE_N_TO_TEST); do \
-		echo "** EXHAUSTIVE TESTING (MESSAGE_LENGTH, KEY_LENGTH, N_BITS) = ($$(($$k-1)), $$k, $$n)"; \
-		if ! bash -x check_all_messages $$(($$k-1))  $$n 2>/dev/null ; then \
+		echo "** EXHAUSTIVE TESTING (BITS OF MESSAGE, KEY_LENGTH, N_BITS) = ($$(($$k-1)), $$k, $$n)"; \
+		if ! bash -x check_all_messages $$((($$k-1)/$$n))  $$n 2>/dev/null ; then \
 		   echo "ERROR WITH (MESSAGE_LENGTH, KEY_LENGTH, N) = ($$k, $$k, $$n)"; \
 		   make save ; \
 		   exit 1; \
