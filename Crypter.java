@@ -64,9 +64,9 @@ class CONST {
  * 
  * It will call en/decryption 
  * 
- * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:48:41%202003)">M. Oliver M&ouml;ller</A>
+ * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:49:25%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  1.6.2                   Fri Feb  7 23:49:25 2003
+ * @version  1.6.2                   Fri Feb  7 23:51:58 2003
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -606,7 +606,7 @@ class Base64Handler {
     
     StringBuffer result = 
       new StringBuffer("Crypter Version: " + CONST.version + "\n" +
-		       "Bits per Byte  : " + CONST.bitsPerByte + "\n" +
+		       "Bits per Char  : " + CONST.bitsPerByte + "\n" +
 		       "begin-base64 CryptoText Input\r\n");
     for(i = 0; i < bits.length; i++){
       b = 2*b;
@@ -660,6 +660,9 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.7  2003/02/07 22:52:25  oli
+ * cosmetic byte -> char
+ *
  * Revision 1.6  2003/02/07 22:50:27  oli
  * removed import of CryptoModule (fails for newer Java versions)
  *
