@@ -207,3 +207,78 @@ References:
 
 
 
+## ###############################################
+## REPLIES
+## ###############################################
+
+From: Kristian Gjøsteen <kristiag+news@math.ntnu.no>
+Subject: Re: Padding Question (Cramer-Shoup 98 Crypto System)
+Newsgroups: sci.crypt
+Date: Mon, 22 Nov 2004 09:36:42 +0000 (UTC)
+Organization: Norwegian University of Science and Technology
+
+Oliver Moeller  <omoeller@verify-it.de> wrote:
+>I have a Java implementation of Cramer-Shoup 98 Crypto System (see links
+>below). Version 2.1 now guarantees to de-crypt to the original message by
+>introducing a safe way to pad the clear text message up to the required block
+>size.
+>
+>They padding I chose is rather straightforward:
+>
+>(I)
+>Always append a bit pattern of fixed (16 bits) length:
+>    1000 1000 1000 1000 
+>The encryption does pad the message with a pattern (01|10)*[0]?, where
+>01 / 10 are picked uniformly random.
+>
+>For n > 16 (realistic values are around 2000), this reduces the number of
+>messages from 2^n to (at least) 2^((n-16)/2).
+
+Why so complicated?
+
+Your message is a bit string of length l. What you need to do (if you
+are using F_p* where p is a safe prime) is to embed that bit string as
+a quadratic residue.
+
+Assume p is k+1 bits long, and that l < k-9. Append a single 1 followed
+by k-8-l 0 bits to the message. The result is exactly k-7 bits long.
+
+Now append 0000000, and check if the resulting binary string has Legendre
+symbol 1 when interpreted as an element in F_p*. If it doesn't, try
+0000001, 0000010, 0000011, etc.
+
+To extract the embedded message, discard the final 7 bits, then any
+trailing zeros, then one one.
+
+This embedding procedure will fail with a probability of roughly 2^128.
+Many systems designers can accept that.
+
+The cost is 10 bits plus an expected 2 Legendre symbol evaluations, which
+corresponds roughly to two multiplications.
+
+If you pardon my horrible Java code, this is the simplest possible
+code I can come up with.
+
+BigInteger embed_message_as_qr(BigInteger p, BigInteger m)
+{
+	int i;
+
+	m = m.shiftLeft(1).setBit(0);
+	m = m.shiftLeft(p.bitLength()-9-m.bitLength());
+
+	for (i = 0; i < 128; ++i)
+	{
+		if (Legendre(m,p) == 1)
+			return m;
+		m.add(BigInteger.ONE);
+	}
+	return BigInteger.ONE.negate();
+}
+
+Implementing Legendre(x,p) is left as an exercise for the reader.
+
+-- 
+Kristian Gjøsteen
+
+
+## -------------------------------------------------------------------------
