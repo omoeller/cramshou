@@ -12,7 +12,7 @@
 ## @FORMAT:  Bash Script
 ## @AUTHOR:  M. Oliver M"oller     <omoeller@brics.dk>
 ## @BEGUN:   Sun Jun 25 18:16:01 2000
-## @VERSION: Sun Jan 12 12:22:10 2003
+## @VERSION: Tue Oct  5 07:12:25 2004
 ## #############################################################
 ## -- files to validate ------------------
 VAL[1]=Vanilla-2014.public.java
@@ -68,7 +68,7 @@ I=1;
 echo ""
 echo ">>>> Download the files freshly from Domain with   (make-val-download)...."
 echo ""
-if emacs -batch --eval '(progn (load-file "~/.emacs")(load-library "my-web-access")(make-val-download) (save-buffers-kill-emacs))'; then
+if emacs -batch --eval '(progn (load-file "~/.emacs")(load-library "om-web-access")(make-val-download) (save-buffers-kill-emacs))'; then
     echo "ERROR: should exit with code 7.";
     exit 1;
 else
@@ -82,7 +82,7 @@ fi;
 echo ""
 echo ""
 echo ">>>> fixing mime...."
-emacs -batch --eval '(progn (load-file "~/.emacs")(load-library "my-web-access")(make-val-remove-mime) (save-buffers-kill-emacs))'
+emacs -batch --eval '(progn (load-file "~/.emacs")(load-library "om-web-access")(make-val-remove-mime) (save-buffers-kill-emacs))'
 ## --------------------
 while [ $I -le $N ]; do
     echo "Validation $I:";

@@ -7,7 +7,7 @@
 ##               existence of
 ##                           make-val-download
 ##                           make-val-remove-mime
-##               in the emacs library my-web-access
+##               in the emacs library om-web-access
 ##
 ##
 ## -- what currently works: ------------------------------------------------
