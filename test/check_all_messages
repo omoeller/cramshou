@@ -121,8 +121,8 @@ function next_message {
 	done;
 
 	export MESSAGE_COUNT=$(num_inc ${MESSAGE_COUNT});
-	echo "## ${MESSAGE_COUNT} / ${MAX_MESSAGE_COUNT}" 1>&2;
 	echo "true";
+	echo "false";
     else
 	echo "false";
     fi;
@@ -133,24 +133,25 @@ echo "## message length ${MESSAGE_LENGTH}";
 echo "## testing all messages from 0 - $((${MAX_MESSAGE_COUNT}-1))";
 
 
-while next_message; do
-
+while next_message >/dev/null; do
+    echo "## ${MESSAGE_COUNT} / ${MAX_MESSAGE_COUNT}" ;
+    
     sync ;		    
-    echo "java Crypter e -${N_BITS} message.txt message.enc " ;
-    if ! java Crypter e -${N_BITS} message.txt message.enc; then
+    echo "java Crypter e -${N_BITS} message.txt message.enc "  1>&2;
+    if ! java Crypter e -${N_BITS} message.txt message.enc >/dev/null; then
 	echo "ERROR: java Crypter e message.txt message.enc FAILED.";
 	exit 4;
     fi; 
 
     sync ;
-    echo "java Crypter d -${N_BITS} message.enc message.dec " ;
-    if ! java Crypter d -${N_BITS} message.enc message.dec; then
+    echo "java Crypter d -${N_BITS} message.enc message.dec "  1>&2;
+    if ! java Crypter d -${N_BITS} message.enc message.dec >/dev/null; then
 	echo "ERROR: java Crypter d message.enc message.dec FAILED" ;
 	exit 5;
     fi; 
     
     sync ;
-    if ! cmp message.txt message.dec ; then
+    if ! cmp message.txt message.dec >/dev/null; then
 	echo "ERROR: Files differ: message.txt message.dec " ;
 	ls -l message.* ;
 	exit 6;
