@@ -1,5 +1,5 @@
 
-N_TO_TEST=7 # 8 # 16
+N_TO_TEST=7  8 # 15
 KEY_LENGTHS_TO_TEST=400 800 1000 2000
 #MESSAGE_LENGTHS_TO_TEST=3 4 5 31 32 34
 MESSAGE_LENGTHS_TO_TEST=10 30  100 200 300 400 500 600 700 800 900 1000 2000
@@ -39,8 +39,8 @@ vanilla:
 	javac -classpath . Crypter.java ;
 	    @for m in $(MESSAGE_LENGTHS_TO_TEST); do \
 		for n in $(N_TO_TEST); do \
-		echo "** TESTING Vanilla MESSAGE_LENGTH = $$m "; \
-		if ! bash -x check_random_message $$m 8  2>/dev/null; then \
+		echo "** TESTING Vanilla MESSAGE_LENGTH = $$m, N=$$n "; \
+		if ! bash -x check_random_message $$m $$n  2>/dev/null; then \
 		   echo "ERROR WITH Vanilla MESSAGE_LENGTH = $$m "; \
 		   make save ; \
 		   exit 1; \
