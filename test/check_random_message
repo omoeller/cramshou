@@ -1,3 +1,18 @@
+## #############################################################
+## BASH Script for checking random crypto messages
+## 
+## Requires:
+##  possibility to run 
+##        java Crypter
+## Usage:
+##        bash check_random_message MESSAGE_LENGTH N_BITS
+## Output:
+##        prints verbose output to stderr
+##        prints operational messages to stdout
+##        returns with error code != 0, iff en/de-cryption or comparison fails.
+## -------------------------------------------------------------
+## $Id : $
+## -------------------------------------------------------------
 
 export MESSAGE_LENGTH=$1;
 export N_BITS=$2;
@@ -74,21 +89,21 @@ sync ;
 echo "java Crypter e -${N_BITS} message.txt message.enc " ;
 if ! java Crypter e -${N_BITS} message.txt message.enc; then
    echo "ERROR: java Crypter e message.txt message.enc FAILED.";
-   exit 2;
+   exit 4;
 fi; 
 
 sync ;
 echo "java Crypter d -${N_BITS} message.enc message.dec " ;
 if ! java Crypter d -${N_BITS} message.enc message.dec; then
    echo "ERROR: java Crypter d message.enc message.dec FAILED" ;
-   exit 3;
+   exit 5;
 fi; 
 
 sync ;
 if ! cmp message.txt message.dec ; then
    echo "ERROR: Files differ: message.txt message.dec " ;
    ls -l message.* ;
-   exit 4;
+   exit 6;
 fi; 
 
 echo "(${MESSAGE_LENGTH},${N_BITS}): ok.";

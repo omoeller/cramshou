@@ -8,19 +8,21 @@
 ## 
 ## jar:	      pack the relevant java/class files into pack.jar 
 ## 
+## testsuite: generate + pack files in the testCrypter directory
+## 
 ## -------------------------------------------------------------
 ## 
 ## Synopsis:
 ##  Contains Birthdays, Weddings ans similar
 ##  To be included in ~/diary
 ## #############################################################
-## @TABLE OF CONTENTS:		       [TOCD: 00:30 04 Feb 2003]
+## @TABLE OF CONTENTS:		       [TOCD: 11:23 20 Nov 2004]
 ##
 ##  [1] Java Compile
 ##  [2] Test
 ##  [3] Jar
-##  [4] Millstone
-##  [5] Public
+##  [4] testCrypter : a test suite
+##  [5] Publish
 ## ##########################################################
 ## @FILE:    Makefile
 ## @PLACE:   Gaia Home
@@ -108,24 +110,47 @@ jar:	$(OBJECT_FILES)
 	ls -l pack.jar ;
 
 
+## ###################################################################
+## [4] testCrypter : a test suite
+## ###################################################################
+
+.PHONEY: testsuite
+
+TESTSUITEDIR=./testCrypter
+TESTSUITE=./testCrypter.zip
+
+testsuite:
+	@if [ ! -d $(TESTSUITEDIR) ]; then mkdir $(TESTSUITEDIR) ; fi;
+	rm -rf $(TESTSUITEDIR)/*
+	cp Makefile_testCrypter $(TESTSUITEDIR)/Makefile;
+	cp test/check_random_message $(TESTSUITEDIR) ;
+	cp Crypter.java $(TESTSUITEDIR) ;
+	cp KeyGeneratorCS.java $(TESTSUITEDIR) ;
+	chmod 0644 $(TESTSUITEDIR)/* ;
+	zip $(TESTSUITE) $(TESTSUITEDIR)/* ;
 
 
 ## ###################################################################
 ## [5] Publish
 ## ###################################################################
 
-WWW_BASE=$(HOME)/Domain/Upload
-
 .PHONEY: publish
 
+WWW_BASE=$(HOME)/Domain/Upload
+WWW_TESTSUITEDIR=$(WWW_BASE)/sub
+
+
 publish:
-	cd Public; make clean all publish; cd ..; \
-	cd .millstone; make clean all publish; cd .. ; \
-	cd toy; make clean all publish; cd .. ; \
-	echo "publish: done." ;\
-	echo "NOTES:"; \
-	echo " + remember to update crypter.html, applet-crypter.html, millstone_crypter.html, applet-millstone_crypter.html" ;\
-	echo " + remember to update Validate (mkval.bash)";
+	cd Public; make clean all publish; 
+	cd .millstone; make clean all publish;
+	cd toy; make clean all publish; 
+	make testsuite ;
+	cp $(TESTSUITE) $(WWW_TESTSUITEDIR) ;
+	@echo "publish: done." 
+	@echo "NOTES:"; 
+	@echo " + remember to update crypter.html, applet-crypter.html, millstone_crypter.html, applet-millstone_crypter.html" ;\
+	@echo " + remember to update Validate (in Val: call mkval.bash)";
+
 
 
 
