@@ -1,10 +1,10 @@
 
-N_TO_TEST=7
-KEY_LENGTHS_TO_TEST=32
+N_TO_TEST=7 # 8 # 16
+KEY_LENGTHS_TO_TEST=400 800 1000 2000
 #MESSAGE_LENGTHS_TO_TEST=3 4 5 31 32 34
-MESSAGE_LENGTHS_TO_TEST=10 100 200 300 500
+MESSAGE_LENGTHS_TO_TEST=10 30  100 200 300 400 500 600 700 800 900 1000 2000
 
-.PHONEY: check save cleansave
+.PHONEY: check save cleansave vanilla
 
 check:
 	@if [ ! -d tmp.000 ]; then mkdir tmp.000 ; fi ;
@@ -28,6 +28,26 @@ check:
 		done;	\
 	    done	\
 	done;
+
+## check only the vanilla file
+
+vanilla:
+	@if [ ! -d tmp.000 ]; then mkdir tmp.000 ; fi ;
+	rm -f *.class ;
+	@cp ../Crypter.java . ;
+	@cp ../CryptoModule.java . ;
+	javac -classpath . Crypter.java ;
+	    @for m in $(MESSAGE_LENGTHS_TO_TEST); do \
+		for n in $(N_TO_TEST); do \
+		echo "** TESTING Vanilla MESSAGE_LENGTH = $$m "; \
+		if ! bash -x check_random_message $$m 8  2>/dev/null; then \
+		   echo "ERROR WITH Vanilla MESSAGE_LENGTH = $$m "; \
+		   make save ; \
+		   exit 1; \
+		fi; \
+		done;	\
+	    done	
+
 
 ## ###################################################################
 ## BACKUP THE LAST FAIL
