@@ -1,6 +1,12 @@
+======================================================================
+== OVERVIEW OVER BASELINES FOR CRYPTER
+======================================================================
+
+CRYPTER_REL_	  (in preparation)
 
 -----------------------------------------------------------------
-CRYPTER_REL_2_1 : Java 1.4.2. or higher (due to java.nio)
+CRYPTER_REL_2_1 : Web-released and annouced in sci.crypt
+		  Java 1.4.2. or higher (due to java.nio)
 		  pads with bit pattern 1000 1000 1000 1000
 		  and crypto algorythm/keygen pads with (10|01)*
 		  Cryper.java Rev. 1.15

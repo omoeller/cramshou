@@ -108,7 +108,7 @@ vanilla:
 ## EXHAUSTIVE CHECK (ALL MESSAGES)
 ## ###################################################################
 
-EXHAUSTIVE_KEY_LENGTHS_TO_TEST=16 24 32
+EXHAUSTIVE_KEY_LENGTHS_TO_TEST=17 25 32
 EXHAUSTIVE_N_TO_TEST=8
 
 .PHONEY: exhaustive
@@ -125,8 +125,8 @@ exhaustive:
             java KeyGeneratorCS -n TestKey-$$k -o Test -f CryptoModule.java $$k; \
 	    javac -classpath . Crypter.java; \
 		for n in $(EXHAUSTIVE_N_TO_TEST); do \
-		echo "** EXHAUSTIVE TESTING (MESSAGE_LENGTH, KEY_LENGTH) = ($$k, $$k, $$n)"; \
-		if ! bash -x check_all_messages $$k  $$n ; then \
+		echo "** EXHAUSTIVE TESTING (MESSAGE_LENGTH, KEY_LENGTH, N_BITS) = ($$(($$k-1)), $$k, $$n)"; \
+		if ! bash -x check_all_messages $$(($$k-1))  $$n 2>/dev/null ; then \
 		   echo "ERROR WITH (MESSAGE_LENGTH, KEY_LENGTH, N) = ($$k, $$k, $$n)"; \
 		   make save ; \
 		   exit 1; \
