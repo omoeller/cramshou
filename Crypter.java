@@ -41,15 +41,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-//==== Here is the Cryptographic Algorithm:
-import CryptoModule;
+// ==== Here is the Cryptographic Algorithm:
+// import CryptoModule;   
+// (not necessary to import it, since its in the same directory)
 // ========================================
 
 /*************************************************************
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "1.6.1";
+  final static String  version    = "1.6.2alpha";
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
@@ -63,9 +64,9 @@ class CONST {
  * 
  * It will call en/decryption 
  * 
- * @author <A HREF="MAILTO:oliver.moeller@verified.de?subject=Crypter.java%20(1.6%20Thu%20Feb%206%2023:43:35%202003)">M. Oliver M&ouml;ller</A>
+ * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:48:41%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  1.6                     Fri Feb  7 00:02:51 2003
+ * @version  1.6.2                   Fri Feb  7 23:49:25 2003
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -659,6 +660,9 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.6  2003/02/07 22:50:27  oli
+ * removed import of CryptoModule (fails for newer Java versions)
+ *
  * Revision 1.5  2003/02/07 07:24:50  oli
  * included automatic truncation after TERMINATOR string
  *
@@ -667,7 +671,7 @@ class Base64Handler {
  *
  * -- Log of changes from older versions --
  *
- * 1.5:  updated to verify-it.default
+ * 1.5 : updated to verify-it.default
  * 1.4 : added main() method for command-line exectution
  *       shortened default encoding line length
  *       made encoding apt for full 8 bits (binary files)
