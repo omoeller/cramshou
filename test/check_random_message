@@ -16,7 +16,7 @@ else
   export LIM=${#STRING};
   export POS=$((`date +"%s"` % ${LIM}));
   export I=1;
-  while [ $I -lt ${MESSAGE_LENGTH} ]; do
+  while [ $I -le ${MESSAGE_LENGTH} ]; do
     echo -n ${STRING:${POS}:1} >> message.txt ;
     export I=$(($I+1));
     export POS=$(((7+${POS}*3) % ${LIM}));
@@ -38,7 +38,7 @@ if ! java Crypter d -${N_BITS} message.enc message.dec; then
 fi; 
 
 sync ;
-if ! diff message.txt message.dec ; then
+if ! cmp message.txt message.dec ; then
    echo "ERROR: Files differ: message.txt message.dec " ;
    ls -l message.* ;
    exit 4;
