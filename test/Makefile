@@ -102,3 +102,38 @@ vanilla:
 		fi; \
 		done;	\
 	    done	
+
+
+## ###################################################################
+## EXHAUSTIVE CHECK (ALL MESSAGES)
+## ###################################################################
+
+EXHAUSTIVE_KEY_LENGTHS_TO_TEST=16 24 32
+EXHAUSTIVE_N_TO_TEST=8
+
+.PHONEY: exhaustive
+
+exhaustive:
+	@if [ ! -d tmp.000 ]; then mkdir tmp.000 ; fi ;
+	@touch CryptoModule.java ;
+	rm -f *.class ;
+	@cp ../KeyGeneratorCS.java . ;
+	javac KeyGeneratorCS.java ;
+	@cp ../Crypter.java . ;
+	@for k in $(EXHAUSTIVE_KEY_LENGTHS_TO_TEST); do \
+	    rm CryptoModule.java ; \
+            java KeyGeneratorCS -n TestKey-$$k -o Test -f CryptoModule.java $$k; \
+	    javac -classpath . Crypter.java; \
+		for n in $(EXHAUSTIVE_N_TO_TEST); do \
+		echo "** EXHAUSTIVE TESTING (MESSAGE_LENGTH, KEY_LENGTH) = ($$k, $$k, $$n)"; \
+		if ! bash -x check_all_messages $$k  $$n ; then \
+		   echo "ERROR WITH (MESSAGE_LENGTH, KEY_LENGTH, N) = ($$k, $$k, $$n)"; \
+		   make save ; \
+		   exit 1; \
+		fi; \
+	    done	\
+	done;
+
+
+
+

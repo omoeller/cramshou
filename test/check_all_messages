@@ -1,0 +1,162 @@
+## #############################################################
+## BASH Script for checking ALL crypto messages of a certain length
+## 
+## Requires:
+##  possibility to run 
+##        java Crypter
+## Usage:
+##        bash check_random_message MESSAGE_LENGTH N_BITS
+## Output:
+##        prints verbose output to stderr
+##        prints operational messages to stdout
+##        returns with error code != 0, iff en/de-cryption or comparison fails.
+## -------------------------------------------------------------
+## $Id : $
+## -------------------------------------------------------------
+
+export MESSAGE_LENGTH=$1;
+export N_BITS=$2;
+
+
+if [ -z "$2" ]; then
+   echo "ERROR: need two arguments: MESSAGE_LENGTH, N_BITS_PER_BITE.";
+   exit 1;
+fi;
+
+if [ ${N_BITS} -ne 8 ]; then   
+   echo "ERROR: not implemented yet for chars-per-byte = ${N_BITS} != 8.";
+   exit 1;
+fi
+
+export MESSAGE_COUNT=0;
+export MAX_MESSAGE_COUNT=0;
+
+
+
+# $1 : n
+# $2 : filename
+# $3 : (optional) minimal value [only if $4 is set, too]
+# $4 : (optional) maximal value
+function n_random_chars_to_file {
+  local MAXIMAL;
+  local MINIMAL;
+  local I;
+  local COUNT ;
+  local LIM ;
+  local K ;
+  local L ;
+  
+  if [ -z "$4" ]; then
+    MINIMAL=0x00 ;
+    MAXIMAL=0xFF ;
+  else
+    MINIMAL=$3 ;
+    MAXIMAL=$4 ;
+  fi;
+
+  if [ -z "$2" ]; then
+    echo "** ERROR: n_random_chars_to_file: need second argument." ;
+    exit 2;
+  fi;
+  if [ -e "$2" ]; then
+    echo "** ERROR: target file \"$2\" does already exist - refuse to overwrite."
+    exit 3;
+  fi;
+  
+  if [ ${MINIMAL} -eq 0x00 ] && [ ${MAXIMAL} -eq 0xFF ] &&  [ -e /dev/random ]; then
+    head -c $1 /dev/random > $2 ;	    
+  else
+    ## only use pseudo-random chars
+  
+    export LIM=65003 ; # a prime number
+    export K=7;
+    export L=13;
+    export I=$((`date +"%s"` % ${LIM})); # seed depending on time of day
+    export COUNT=0;
+
+    while [ ${COUNT} -lt ${1} ]; do
+      export I=$((($K+${I}*${L}) % ${LIM}));
+      #echo $(printf %02x $((${MINIMAL}+ (${I} % (${MAXIMAL}-${MINIMAL} + 1)))))
+      printf "\x$(printf %02x $((${MINIMAL} + (${I} % (${MAXIMAL}-${MINIMAL} + 1)))) )" >> $2;
+      export COUNT=$(($COUNT+1));
+    done;
+  fi;
+}
+
+
+function num_expt_2 { ## return 2^$1
+    echo $((2**$1));
+}
+
+function num_inc { ## return $1+1
+    echo $((1+$1));
+}
+
+function num_times { ## return $1 * $2
+    echo $(($1*$2));
+}
+function num_div { ## return $1 / $2
+    echo $(($1/$2));
+}
+
+function num_less_equal {
+    if [ $1 -le $2 ]; then
+	echo true;
+    else
+	echo false;
+    fi
+}
+
+function next_message {
+    local pos=1;
+    
+    if [ ${MESSAGE_COUNT} -lt ${MAX_MESSAGE_COUNT} ]; then
+	echo -n "" > message.txt;
+	while $(num_less_equal $(num_times $pos 256) ${MAX_MESSAGE_COUNT}); do
+	    ## echo "## ${MESSAGE_COUNT} : $pos: $(($(num_div ${MESSAGE_COUNT} $pos) % 256))" \
+		1>&2;
+	    printf "\x$(($(num_div ${MESSAGE_COUNT} $pos) % 256))" \
+		>> message.txt ;
+	    pos=$(num_times pos 256);
+	done;
+
+	export MESSAGE_COUNT=$(num_inc ${MESSAGE_COUNT});
+	## echo "## ${MESSAGE_COUNT}" 1>&2;
+	echo "true";
+    else
+	echo "false";
+    fi;
+}
+
+export MAX_MESSAGE_COUNT="$(num_expt_2 ${MESSAGE_LENGTH})";
+echo "## message length ${MESSAGE_LENGTH}";
+echo "## testing all messages from 0 - ${MAX_MESSAGE_COUNT}";
+
+
+while next_message; do
+
+    sync ;		    
+    echo "java Crypter e -${N_BITS} message.txt message.enc " ;
+    if ! java Crypter e -${N_BITS} message.txt message.enc; then
+	echo "ERROR: java Crypter e message.txt message.enc FAILED.";
+	exit 4;
+    fi; 
+
+    sync ;
+    echo "java Crypter d -${N_BITS} message.enc message.dec " ;
+    if ! java Crypter d -${N_BITS} message.enc message.dec; then
+	echo "ERROR: java Crypter d message.enc message.dec FAILED" ;
+	exit 5;
+    fi; 
+    
+    sync ;
+    if ! cmp message.txt message.dec ; then
+	echo "ERROR: Files differ: message.txt message.dec " ;
+	ls -l message.* ;
+	exit 6;
+    fi; 
+    
+done;
+
+echo "(${MESSAGE_LENGTH},${N_BITS}): ok.";
+    
