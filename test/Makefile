@@ -119,10 +119,18 @@ exhaustive:
 	rm -f *.class ;
 	@cp ../KeyGeneratorCS.java . ;
 	javac KeyGeneratorCS.java ;
-	@cp ../Crypter.java . ;
+	@cp ../Crypter.java . 
+	@rm -f found.txt ;
 	@for k in $(EXHAUSTIVE_KEY_LENGTHS_TO_TEST); do \
-	    rm CryptoModule.java ; \
-            java KeyGeneratorCS -n TestKey-$$k -o Test -f CryptoModule.java $$k; \
+	    NOTFOUND=true; \
+	    while $${NOTFOUND}; do \
+	      rm CryptoModule.java ; \
+              java KeyGeneratorCS -n TestKey-$$k -o Test -f CryptoModule.java $$(($$k-1)) ; \
+	      grep TestKey CryptoModule.java >> found.txt ; \
+	      if grep -e "TestKey-$$k-$$k" CryptoModule.java; then \
+		 NOTFOUND=false; \
+	      fi; \
+	    done; \
 	    javac -classpath . Crypter.java; \
 		for n in $(EXHAUSTIVE_N_TO_TEST); do \
 		echo "** EXHAUSTIVE TESTING (MESSAGE_LENGTH, KEY_LENGTH, N_BITS) = ($$(($$k-1)), $$k, $$n)"; \
