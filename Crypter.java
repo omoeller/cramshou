@@ -54,7 +54,7 @@ import java.io.OutputStreamWriter;
  * Contains all global constants
  *************************************************************/
 class CONST {
-  final static String  version    = "2.0." + new String("$Revision: 1.11 $").substring(13).replace('$',' ');
+  final static String  version    = "2.0." + new String("$Revision: 1.12 $").substring(13).replace('$',' ');
   final static String  TERMINATOR = "\n*\n"; 
 
   public static boolean truncateAfterTERMINATOR;
@@ -70,7 +70,7 @@ class CONST {
  * 
  * @author <A HREF="MAILTO:omoeller@verify-it.de?subject=Crypter.java%20(1.6.2%20Fri%20Feb%207%2023:49:25%202003)">M. Oliver M&ouml;ller</A>
  * @begun    99/09/26
- * @version  $Revision: 1.11 $            $Date: 2004/07/07 17:47:38 $
+ * @version  $Revision: 1.12 $            $Date: 2004/07/12 20:51:50 $
  ************************************************************/
 
 public class Crypter extends java.applet.Applet implements Runnable {
@@ -605,11 +605,13 @@ class Base64Handler {
     resString = result.toString();
 
     if(truncate){
-      for(i = result.length()-1; i >= 0; i--){
-	if(resString.regionMatches(true, i,CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
-	  if(CONST.verbose)
-	    System.err.println(" !  Truncate");	
-	  resString = (result.toString()).substring(0,i );
+      for(i  = result.length() - 1 ;
+	  i >= 0 ;
+	  i--){
+	if(resString.regionMatches(i, CONST.TERMINATOR, 0, CONST.TERMINATOR.length())){
+	  if(CONST.verbose || true)
+	    System.out.println(" !  Truncate");	
+	  resString = resString.substring(0, i );
 	  i = -1;
 	}
       }
@@ -705,6 +707,9 @@ class Base64Handler {
  * Changelog
  *
  * $Log: Crypter.java,v $
+ * Revision 1.12  2004/07/12 20:51:50  oli
+ * intermediate check-in: some tests fail.
+ *
  * Revision 1.11  2004/07/07 17:47:38  oli
  * fixed: replaced unsupported method 'substring(,)' for StringBuffer
  *

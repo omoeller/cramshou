@@ -16,9 +16,9 @@
 // @FORMAT:  java
 // @AUTHOR:  M. Oliver M'o'ller     <omoeller@verify-it.de>
 // @BEGUN:   Thu Jul 11 10:59:06 2002
-// @VERSION: $Revision: 1.3 $ 		$Date: 2004/07/07 06:52:54 $
+// @VERSION: $Revision: 1.4 $ 		$Date: 2004/07/12 20:51:50 $
 // /////////////////////////////////////////////////////////////
-// $Id: KeyGeneratorCS.java,v 1.3 2004/07/07 06:52:54 oli Exp $
+// $Id: KeyGeneratorCS.java,v 1.4 2004/07/12 20:51:50 oli Exp $
 // /////////////////////////////////////////////////////////////
 // @SPELL:   british 			Wed Jul  7 07:43:06 2004
 
@@ -57,12 +57,12 @@ public class KeyGeneratorCS  {
   /**
    * Name of this version (should be global for project)
    */
-  public static final String VERSION_NAME = "1.1 $Revision: 1.3 $";
+  public static final String VERSION_NAME = "1.1 $Revision: 1.4 $";
 
   /**
    * Date of last changes
    */
-  public static final String VERSION_DATE = "$Date: 2004/07/07 06:52:54 $";
+  public static final String VERSION_DATE = "$Date: 2004/07/12 20:51:50 $";
 
   /**
    * String describing the version of this API
@@ -1044,7 +1044,6 @@ public class KeyGeneratorCS  {
     os.write("	    int toEncrypt     = (1+ (message.length / el))*pk.k*4;\n");
     os.write("	    boolean[] mChunk  = new boolean[pk.k];\n");
     os.write("	    mChunk[pk.k-1] = false;      // ignore most significant bit\n");
-    os.write("	    //	    mChunk[0] = false;      // ignore most significant bit\n");
     os.write("	    boolean[] cChunk  = new boolean[pk.k*4];\n");
     os.write("	    boolean[] res     = new boolean[toEncrypt];\n");
     os.write("	    int resIndex      = 0;\n");
@@ -1115,6 +1114,8 @@ public class KeyGeneratorCS  {
     os.write("	    \n");
     os.write("	    alpha = hashBitList(sk.k,sk.p,sk.hash,bitListThree(sk.k,u1,u2,e));\n");
     os.write("	    \n");
+    //    os.write("	    if(u1.equals(BigInteger.ZERO)){ System.out.println(\"WARNING: u1 is zero!!!!\"); }\n");
+    
     os.write("	    if((v.equals(((u1.modPow(sk.x1.add(alpha.multiply(sk.y1)),sk.p)                    ).multiply(u2.modPow(sk.x2.add(alpha.multiply(sk.y2)),sk.p))).mod(sk.p))))\n");
     os.write("		{\n");
     os.write("		    m = (e.multiply((u1.modPow(sk.z,sk.p)).modInverse(sk.p))).mod(sk.p);\n");
