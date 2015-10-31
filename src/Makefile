@@ -46,8 +46,7 @@ all:	$(OBJECT_FILES)
 
 
 clean:
-	rm *.class
-
+	rm -f *.class CryptoModule.java
 
 ## ###################################################################
 ## [1] Java Compile
