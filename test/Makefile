@@ -40,9 +40,9 @@ check:
 	@if [ ! -d tmp.000 ]; then mkdir tmp.000 ; fi ;
 	@touch CryptoModule.java ;
 	rm -f *.class ;
-	@cp ../KeyGeneratorCS.java . ;
+	@cp ../src/KeyGeneratorCS.java . ;
 	javac KeyGeneratorCS.java ;
-	@cp ../Crypter.java . ;
+	@cp ../src/Crypter.java . ;
 	@for k in $(KEY_LENGTHS_TO_TEST); do \
 	    rm CryptoModule.java ; \
             java KeyGeneratorCS -n TestKey-$$k -o Test -f CryptoModule.java $$k; \
