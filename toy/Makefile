@@ -34,9 +34,9 @@ clean:
 ## -- Copy some java - except CrypoModule.java ! ----------------------------
 
 
-ToyCrypter.java:	../Crypter.java
+ToyCrypter.java:	../src/Crypter.java
 	echo "// Generated from Crypter.java on: $$(date)" \
-		| cat - ../Crypter.java \
+		| cat - ../src/Crypter.java \
 		|sed 's/Crypter/ToyCrypter/g' \
 	        |sed 's/CryptoModule/ToyCryptoModule/g' \
 	     	> ToyCrypter.java; \
@@ -53,12 +53,12 @@ ToyCryptoModule.class:	ToyCrypter.class
 .PHONEY:  test
 
 test:	$(OBJECT_FILES)
-	cp ../binary.in ./test.in ; \
+	cp ../src/binary.in ./test.in ; \
 	date >> ./test.in ; \
 	java ToyCrypter e -$(TEST_BITS) ./test.in ./test.out ; \
 	java ToyCrypter d -$(TEST_BITS) ./test.out ./test.decrypted ; \
-	java ToyCrypter u -$(TEST_BITS) ./test.out ./test.complete ; \
-	if cmp -c ./test.in ./test.decrypted; then \
+	java ToyCrypter u -$(TEST_BITS) ./test.out ./test.untruncated ; 
+	@if cmp -c ./test.in ./test.decrypted; then \
 		echo "** Test successful." ; \
 	else \
 		echo "** Test FAILED!" ; \
