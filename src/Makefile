@@ -32,7 +32,7 @@
 ## 
 
 TEST_BITS=8
-TEST_KEYLEN=16
+TEST_KEYLEN=32
 
 JAVA_FILES=$(wildcard ./*.java)
 
@@ -62,12 +62,21 @@ clean:
 
 .PHONEY:  test test_ordinary test_binary check
 
-test:	 CryptoModule.java test_ordinary test_binary check
+test:	 
+	@echo "----------------------------------------------------------------------"
+	@echo " This will "
+	@echo "  (a) create a (short) key pair (in CrytoModule.java)"
+	@echo "  (b) compile the code (with javac)"
+	@echo "  (c) try to encrypt-decrypt with it binary and ASCII input"
+	@echo "----------------------------------------------------------------------"
+	rm -f CryptoModule.java CryptoModule.class
+	$(MAKE) CryptoModule.java $(OBJECT_FILES) test_ordinary test_binary check
 
 CryptoModule.java: KeyGeneratorCS.class
 	java KeyGeneratorCS -f $(@) $(TEST_KEYLEN)
 
 test_ordinary: $(OBJECT_FILES) CryptoModule.class
+	@echo "## -- testing encryption/decryption of ordinary input --------"
 	@if [ ! -d tmp ]; then mkdir tmp; fi ;
 	@cp ordinary.in ./tmp/test.in ; 
 	@date >> ./tmp/test.in ; 
@@ -82,6 +91,7 @@ test_ordinary: $(OBJECT_FILES) CryptoModule.class
 	fi; \
 
 test_binary: $(OBJECT_FILES)
+	@echo "## -- testing encryption/decryption of binary input --------"
 	@if [ ! -d tmp ]; then mkdir tmp; fi ;
 	@cp binary.in ./tmp/test.in ; 
 	@date >> ./tmp/test.in ; 
