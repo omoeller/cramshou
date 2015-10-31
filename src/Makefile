@@ -4,8 +4,6 @@
 ##
 ## test:      construct a date-dependent sanity test	
 ##
-## millstone: Generate the Millstone Version of the Crypter.
-## 
 ## jar:	      pack the relevant java/class files into pack.jar 
 ## 
 ## testsuite: generate + pack files in the testCrypter directory
@@ -25,18 +23,21 @@
 ##  [5] Publish
 ## ##########################################################
 ## @FILE:    Makefile
-## @PLACE:   Gaia Home
+## @PLACE:   *unkown*
 ## @FORMAT:  plain text
 ## @AUTHOR:  M. Oliver M'o'ller     <oliver.moeller@verified.de>
 ## @BEGUN:   Mon Feb  3 23:10:12 2003
-## @VERSION: Mon Feb  3 23:10:12 2003
+## @VERSION: Sat Oct 31 10:58:30 2015
 ## #############################################################
 ## 
 
 TEST_BITS=8
+TEST_KEYLEN=16
 
 JAVA_FILES=$(wildcard ./*.java)
 
+#J_FLAGS=-Xlint:unchecked -deprecation
+J_FLAGS=-deprecation
 
 OBJECT_FILES=$(patsubst ./%.java,./%.class,$(JAVA_FILES))
 
@@ -53,7 +54,7 @@ clean:
 ## ###################################################################
 
 %.class:	%.java
-	javac -deprecation $< ;
+	javac $(J_FLAGS) $< ;
 
 
 ## ###################################################################
@@ -62,9 +63,12 @@ clean:
 
 .PHONEY:  test test_ordinary test_binary check
 
-test:	 test_ordinary test_binary check
+test:	 CryptoModule.java test_ordinary test_binary check
 
-test_ordinary: $(OBJECT_FILES)
+CryptoModule.java: KeyGeneratorCS.class
+	java KeyGeneratorCS -f $(@) $(TEST_KEYLEN)
+
+test_ordinary: $(OBJECT_FILES) CryptoModule.class
 	@if [ ! -d tmp ]; then mkdir tmp; fi ;
 	@cp ordinary.in ./tmp/test.in ; 
 	@date >> ./tmp/test.in ; 
@@ -94,8 +98,8 @@ test_binary: $(OBJECT_FILES)
 
 
 check:
-	cd test ; \
-	make check; 
+	@echo "For exhaustive checks, do "
+	@echo "   make -C ../test check"
 
 
 ## ###################################################################
@@ -116,8 +120,8 @@ jar:	$(OBJECT_FILES)
 
 .PHONEY: testsuite
 
-TESTSUITEDIR=./testCrypter
-TESTSUITE=./testCrypter.zip
+TESTSUITEDIR=./../testCrypter
+TESTSUITE=./../testCrypter.zip
 
 testsuite:
 	@if [ ! -d $(TESTSUITEDIR) ]; then mkdir $(TESTSUITEDIR) ; fi;
@@ -143,7 +147,6 @@ WWW_TESTSUITEDIR=$(WWW_BASE)/sub
 
 publish:
 	cd Public; make clean all publish; 
-	cd .millstone; make clean all publish;
 	cd toy; make clean all publish; 
 	make testsuite ;
 	cp $(TESTSUITE) $(WWW_TESTSUITEDIR) ;
