@@ -1,20 +1,24 @@
 ## #############################################################
+## MAKE TARGETS
 ## 
-## Special makes -----------------------------------------------
+## all      : create and compile your key pair (UserCryptoModule.java)
 ##
-## test:      construct a date-dependent sanity test	
+## check    : test your key pair
 ##
-## jar:	      pack the relevant java/class files into pack.jar 
+## jar:	    : pack the relevant java/class files into pack.jar 
 ## 
 ## testsuite: generate + pack files in the testCrypter directory
 ## 
+## remove   : remove the UserCryptoModule.java
+##
+## clean    : clean the generated/compiled files (but leave UserCryptoModule.java)
+##
 ## -------------------------------------------------------------
 ## 
 ## Synopsis:
-##  Contains Birthdays, Weddings ans similar
-##  To be included in ~/diary
+##  Cramer Shoup Crypto System
 ## #############################################################
-## @TABLE OF CONTENTS:		       [TOCD: 11:23 20 Nov 2004]
+## @TABLE OF CONTENTS:		       [TOCD: 11:10 01 Nov 2015]
 ##
 ##  [1] Java Compile
 ##  [2] Test
@@ -27,26 +31,40 @@
 ## @FORMAT:  plain text
 ## @AUTHOR:  M. Oliver M'o'ller     <oliver.moeller@verified.de>
 ## @BEGUN:   Mon Feb  3 23:10:12 2003
-## @VERSION: Sat Oct 31 10:58:30 2015
+## @VERSION: Sun Nov  1 11:01:43 2015
 ## #############################################################
-## 
 
-TEST_BITS=8
-TEST_KEYLEN=32
+## -- Adjust this to your personal settings --------------------------------
 
-JAVA_FILES=$(wildcard ./*.java)
+USER_NAME   = Miss Y
+USER_EMAIL  = <X@nowhere.org>
+USER_KEYLEN = 2048
+
+## -------------------------------------
+TEST_BITS = 8
+## -------------------------------------------------------------------------
+
+JAVA_FILES=Crypter.java CryptoModule.java
 
 #J_FLAGS=-Xlint:unchecked -deprecation
 J_FLAGS=-deprecation
 
-OBJECT_FILES=$(patsubst ./%.java,./%.class,$(JAVA_FILES))
+OBJECT_FILES=$(patsubst %.java,%.class,$(JAVA_FILES))
 
-
-all:	$(OBJECT_FILES)
-
+all:	
+	$(MAKE) UserCryptoModule.java
+	cp UserCryptoModule.java CryptoModule.java
+	$(MAKE) $(OBJECT_FILES)
 
 clean:
 	rm -f *.class CryptoModule.java
+
+remove: clean
+	rm -f UserCryptoModule.java
+
+UserCryptoModule.java:
+	$(MAKE) KeyGeneratorCS.class
+	java KeyGeneratorCS -f $(@) -n "$(USER_NAME)" -o "$(USER_NAME) $(USER_EMAIL)" $(USER_KEYLEN)
 
 ## ###################################################################
 ## [1] Java Compile
@@ -60,20 +78,19 @@ clean:
 ## [2] Test
 ## ###################################################################
 
-.PHONEY:  test test_ordinary test_binary check
+.PHONEY:  check test_ordinary test_binary 
 
-test:	 
+check:	 
 	@echo "----------------------------------------------------------------------"
 	@echo " This will "
-	@echo "  (a) create a (short) key pair (in CrytoModule.java)"
+	@echo "  (a) ensure your UserKey is build"
 	@echo "  (b) compile the code (with javac)"
 	@echo "  (c) try to encrypt-decrypt with it binary and ASCII input"
 	@echo "----------------------------------------------------------------------"
-	rm -f CryptoModule.java CryptoModule.class
-	$(MAKE) CryptoModule.java $(OBJECT_FILES) test_ordinary test_binary check
-
-CryptoModule.java: KeyGeneratorCS.class
-	java KeyGeneratorCS -f $(@) $(TEST_KEYLEN)
+	$(MAKE) all
+	$(MAKE) test_ordinary test_binary 
+	@echo " For more exhautive checks do: "
+	@echo "     make -C ../test usertest"
 
 test_ordinary: $(OBJECT_FILES) CryptoModule.class
 	@echo "## -- testing encryption/decryption of ordinary input --------"
@@ -106,7 +123,7 @@ test_binary: $(OBJECT_FILES)
 	fi; \
 
 
-check:
+info:
 	@echo "For exhaustive checks, do "
 	@echo "   make -C ../test check"
 
@@ -155,15 +172,13 @@ WWW_TESTSUITEDIR=$(WWW_BASE)/sub
 
 
 publish:
-	cd Public; make clean all publish; 
-	cd toy; make clean all publish; 
+	$(MAKE) -C Public clean all publish
+
+publish-testsuite:
 	make testsuite ;
 	cp $(TESTSUITE) $(WWW_TESTSUITEDIR) ;
-	echo "publish: done." 
-	echo "NOTES:"; 
-	echo " + remember to update crypter.html, applet-crypter.html, millstone_crypter.html, applet-millstone_crypter.html" ;\
-	echo " + remember to update Validate (in ./Validate: call mkval.bash)";
 
+## -------------------------------------------------------------------------
 
 
 
