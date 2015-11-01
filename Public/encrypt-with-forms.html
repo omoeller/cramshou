@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Encryption using form</title>
+<script language="JavaScript" type="text/javascript">
+<!-- Hide
+var mailMessage;
+
+function clearMessage()
+{
+ window.document.forms[0].messageText.value = "" ;
+ window.document.applets[0].setMessageText("");
+}
+
+function setMessage()
+{
+  document.burnit;
+  window.document.applets[0].setMessageText(window.document.forms[0].messageText.value); 
+}
+function computeCrypto()
+{				       
+  setMessage();			       
+  window.document.forms[0].messageText.value = ">>> Encrypting....\n>>> Please wait.";
+  window.status = '*encrypting*  Please Wait....*';
+  window.document.applets[0].callEncrypt();
+  window.document.forms[0].messageText.value = ">>> Encrypting done.";
+  setMessage();			       
+  window.document.forms[0].messageText.value = (unescape(window.document.applets[0].getCryptoTextEscaped())).replace('\r','','g');
+  window.status = 'encryption done.'   											   	 
+  mailMessage="MAILTO:myUser@myDomain.org?subject=*Message*&body="+escape(window.document.applets[0].getCryptoTextEscaped().replace('\r','','g'));     	 
+}      				       														  
+// --> 				       
+</script>			       
+</head>				       
+				       
+<body>
+<h1>Encryption using form [./Public]</h1>
+
+<APPLET
+    NAME="theApplet" 
+    codebase="."
+    code="Crypter.class" width="1" height="1" >
+</APPLET></P>
+If you want to write me a private email message, you can do that here:
+<FORM name="messageForm"
+      onSubmit = ""
+      ACTION="javascript:"
+>
+<TEXTAREA name="messageText" COLS="79" ROWS="10">
+</TEXTAREA>
+</FORM>
+<FORM name="sendForm"
+      onSubmit="javascript:computeCrypto();open(mailMessage,'','',false);"
+      onReset="javascript:clearMessage();"
+      ACTION="javascript:alert('Encrypted%20Message%20has%20been%20created,%20a%20mail%20window%20should%20po%20%20up%20now.');"
+>
+<FONT COLOR="#000000">
+<INPUT TYPE=reset VALUE="Clear">&nbsp;
+<INPUT TYPE=submit VALUE="Send Encrypted">
+</FONT>
+<EM>[original message will be destroyed -- go here for a
+version <A HREF="./applet-crypter.html">without forms</A>]</EM>
+</FORM>
+<I>Please send this as 'plain text' only.</I>
+
+<hr>
+<address></address>
+<!-- hhmts start -->
+<A CLASS="small" HREF="MAILTO:webmaster@verify-it.de?subject=Comments%20on%20*unknown*HUB/cramshou/Public/encrypt-with-forms.html">webmaster</A> - 
+<FONT SIZE="1" FACE="arial,helvetica">
+<!-- **TIME STAMP** -->Last modified: Sun Nov  1 12:21:34 2015
+</FONT><BR>
+<!-- hhmts end -->
+</body> </html>

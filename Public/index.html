@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>PublicCrypter (as applet)</title>
+</head>
+
+<body>
+<h1>PublicCrypter - This should show you the applet [./Publish]</h1>
+
+(You have to enable Java in your browser for this.)
+
+<APPLET codebase="."
+        code="Crypter.class"
+  width="90%" height="90%"
+  >
+</APPLET><BR><BR>
+Note: Here only the <em>encryption</em> works, since the secret key is NOT
+        included (in <tt>CrytoModule.class</tt>). 
+
+This is the way you want it, if you put it on your webpage: Everybody can
+encrypt.
+But only you, with your personal copy (containing the secret key) can decrypt
+again.<br>
+
+See <A HREF="./encrypt-with-forms.html">Here</A> for a version that uses forms.
+
+<hr>
+<address></address>
+<!-- hhmts start -->
+</body> </html>
