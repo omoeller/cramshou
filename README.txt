@@ -9,11 +9,15 @@ The standard realization is an implementation of the
 Cramer-Shoup'98 Crypto System.
 
 -----------------------------------------
-Find out more at: http://www.verify-it.de/sub/crypter.html
------------------------------------------
 For a quick and dirty test, do
     make -C src test
 -----------------------------------------
+Instructions how to use are in file HOWTO.txt
+-----------------------------------------
+Find out more at: http://www.verify-it.de/sub/crypter.html
+-----------------------------------------
 
+have fun! 
+<omoeller@verify-it.de> 
 
 
