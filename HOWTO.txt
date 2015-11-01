@@ -1,0 +1,156 @@
+## #############################################################
+## HOWTO use the 'crashou' repository
+## 
+## #############################################################
+## @TABLE OF CONTENTS:		       [TOCD: 12:24 01 Nov 2015]
+##
+##  [1] PRELIMINARIES
+##  [2] CONTENTS
+##      [2.1] System Requirements
+##  [3] USAGE
+##      [3.1] GENERATION OF YOUR KEY PAIR
+##      [3.2] TRY IT OUT
+##      [3.3] Publish your public key part on the web (Optional)
+####################################################
+## @Spell: english 			Sun Nov  1 12:31:55 2015
+
+## ###################################################################
+## [1] PRELIMINARIES
+## ###################################################################
+
+This module contains a (simple) reference implementation of the Cramer-Shoup 
+crypto-System, which is an asymmetric system, i.e., you have a 
+public and a private key - and only the owner of the latter can decrypt.
+More information on this interesting system is here:
+
+   https://en.wikipedia.org/wiki/Cramer%E2%80%93Shoup_cryptosystem
+   http://www.verify-it.de/sub/cramer_shoup.html
+
+This implementation targets a web-application usage, i.e., allows people to
+set up a web page that contains both the (java) application code and the
+public key - so encryption can happen via your friends web-browser without
+any extra tools installed.
+The required key generator application is provided (also in java).
+
+For decrypting, you have to keep a (private) version of the application that
+also includes the private key; that, of course, should NEVER go on a web page.
+
+This is by no means a 'competitive' implementation. But its small and open,
+so feel free to browse the code and notify me about problems:
+   <omoeller@verify-it.de>
+If there is interest, I will add contributors to the github repository.
+
+## ###################################################################
+## [2] CONTENTS
+## ###################################################################
+
+ ./src/	    : generate (and test) your public/private key pair
+ ./Public/  : prepare the part that goes onto a public web page
+ 	      (a copy of ./src/UserCryptoModule.java without the private key part)
+ ./test/    : test that encryption/decryption works on sample inputs
+ 	      in general this also confirms that the key-generator creates
+	       operative keys	
+ 	      this can also be used to test the generated UserCryptoModule (make usertest)
+ ./toy/     : a precompiled toy instance that you can try with a web browser (index.html)
+
+## ###############################################
+## [2.1] System Requirements
+## ###############################################
+
+You need a java compiler (javac) installed.
+In 2002, it worked with java 1.1.5 and it still works with 1.7.0 (though it
+complains about deprecation at some point), so there is a good chance that any
+one you got will do.
+
+If you have a shell (recommended: bash) installed (with basic make, sed, grep,
+etc.), then more parts will work (e.g. the Publish part).
+
+## ###################################################################
+## [3] USAGE
+## ###################################################################
+
+## ###############################################
+## [3.1] GENERATION OF YOUR KEY PAIR
+## ###############################################
+
+The starting point should be the 
+   ./src/
+directory, where you create your own public/private key pair.
+
+You should configure this be changing the Makefile macros
+   USER_NAME	 # the name to print in your key
+   USER_EMAIL	 # your email address
+   USER_KEYLEN   # number of random bits to use in the key; >= 2048 should be fine
+and then call
+   make UserCryptoModule.java
+
+If you do not want to change the Makefile, you can also call
+   make USER_NAME="My Name" USER_EMAIL="<my-mail>" USER_KEYLEN=2049 UserCryptoModule.java
+
+If you want to re-do this step, remove the outdated UserCryptoModule.java
+first (or call: make remove).
+
+
+By now it should be clear that this implementation is very basic: it does not
+cater for key organization, key deprecation, exchange, signing, or multiple
+key pairs.
+All that is just hard-coded in the file CryptoModule.java (which is created as
+copy of UserCryptoModule.java).  
+The "public" part is just a CryptoModule.java with the secret key component
+deleted (this happens in ./Publish/).
+
+The thing that might make crashou attractive is that its small: You can actually read and
+understand ALL code that is involved without having to put trust in some third 
+party.
+
+## ###############################################
+## [3.2] TRY IT OUT
+## ###############################################
+
+In ./src/ you can call 
+   make check
+to try out some simple inputs/outputs. This will confirm that the data you
+encrypt can actually be decrypted to the original message again.
+You can also use this by command line, for the usage call
+   java Crypter
+
+For more exhaustive checks do: 
+     make -C ../test usertest
+
+Also you can open index.html in your web browser.
+
+## ###############################################
+## [3.3] Publish your public key part on the web (Optional)
+## ###############################################
+
+If you are satisfied with your key (bit-size, name, and you managed to make it
+work), then you can consider putting the public part of it publicly
+available.
+
+In directory ./Public/ you can call
+
+   make CryptoModule.java
+
+to create a copy of UserCryptoModule.java with the secret key deactivated (all
+components set to 0 ).
+
+If you compile this with
+
+   make all
+
+then you have all the parts that can go public.
+See:
+   index.html
+Here the decryption button will not work.
+
+For web-pages, the following is more useful, since it already prepares "send by mail":
+   encrypt-with-forms.html
+
+If you want to copy the *.class files for file upload, you can adjust WWW_BASE in the Makefile
+and then call:
+    
+    make publish
+
+This assumes that you have a sub-directory 'applets' there.
+
+## -------------------------------------------------------------------------
