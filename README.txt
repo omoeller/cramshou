@@ -1,18 +1,15 @@
-This directory is for the development of the Crypter wrapper
-(which is both applet and application)
-
-The standard realization of a CrytoModule.java should actually
-be an instance of a crypto-INTERFACE; this is not programmed
-this way to keep things simple.
-
-The standard realization is an implementation of the
-Cramer-Shoup'98 Crypto System.
+This repository contains a Java implementation of the Cramer Shoup'98
+Crypto System, usable both as applet and application.
 
 -----------------------------------------
-For a quick and dirty test, do
-    make -C src test
+Usage instructions are in file HOWTO.txt
+For a quick try-out of key generation and en/decryption, call
+    make -C src check
 -----------------------------------------
-Instructions how to use are in file HOWTO.txt
+Shortcomings:
+  The standard realization of a CrytoModule.java should actually
+  be an instance of a crypto-INTERFACE; this is not programmed
+  this way to keep things simple.
 -----------------------------------------
 Find out more at: http://www.verify-it.de/sub/crypter.html
 -----------------------------------------
