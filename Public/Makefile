@@ -64,7 +64,7 @@ Crypter.java:	../src/Crypter.java
 ## [2] Publish
 ## ###################################################################
 
-.PHONEY:	publish
+.PHONEY:	publish publish-java
 
 publish:	
 	cp Base64Handler.class $(WWW_BASE)/applets/ ; \
@@ -74,7 +74,9 @@ publish:
 	cp HashFunction.class $(WWW_BASE)/applets/ ; \
 	cp Listener.class $(WWW_BASE)/applets/ ; \
 	cp PublicKey.class $(WWW_BASE)/applets/ ; \
-	chmod 0755 $(WWW_BASE)/applets/*.class ; \
+	chmod 0755 $(WWW_BASE)/applets/*.class ; 
+
+publish-java:
 	cp Crypter.java $(WWW_BASE)/applets/ ; \
 	cp CryptoModule.java $(WWW_BASE)/applets/ ; \
 	chmod 0644 $(WWW_BASE)/applets/Crypt*.java ; 
